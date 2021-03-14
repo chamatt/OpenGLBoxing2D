@@ -34,6 +34,25 @@ class Random {
         }
 };
 
+class Color {
+public:
+    GLfloat R;
+    GLfloat G;
+    GLfloat B;
+    
+    Color() {
+        this->R = 0;
+        this->G = 0;
+        this->B = 0;
+    }
+    
+    Color(GLfloat R, GLfloat G, GLfloat B) {
+        this->R = (float)R/(float)255;
+        this->G = (float)G/(float)255;
+        this->B = (float)B/(float)255;
+    }
+};
+
 class Point2D {
     public:
         GLfloat x;

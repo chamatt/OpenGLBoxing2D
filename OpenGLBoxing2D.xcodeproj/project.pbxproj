@@ -14,7 +14,7 @@
 		90F480B025FDA52C00B1C69C /* OpenGLBoxing2D.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = OpenGLBoxing2D.xcodeproj; sourceTree = "<group>"; };
 		90F480B325FDA52C00B1C69C /* framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framework.cpp; sourceTree = "<group>"; };
 		90F480B425FDA7F900B1C69C /* character.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = character.cpp; sourceTree = "<group>"; };
-		90F480B525FDA7F900B1C69C /* character.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = character.hpp; sourceTree = "<group>"; };
+		90F480B525FDA7F900B1C69C /* character.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = character.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -22,7 +22,7 @@
 			isa = PBXGroup;
 			children = (
 				90F480B425FDA7F900B1C69C /* character.cpp */,
-				90F480B525FDA7F900B1C69C /* character.hpp */,
+				90F480B525FDA7F900B1C69C /* character.h */,
 				90F480AC25FDA4A200B1C69C /* README.md */,
 				90F480B325FDA52C00B1C69C /* framework.cpp */,
 				90F480AE25FDA52C00B1C69C /* framework.h */,

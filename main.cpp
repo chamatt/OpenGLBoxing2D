@@ -12,7 +12,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "framework.h"
-#include "character.hpp"
+#include "character.h"
 #define INC_KEY 5
 #define INC_KEYIDLE 2
 
