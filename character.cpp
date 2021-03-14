@@ -47,27 +47,17 @@ void Character::DrawStroke(GLint radius, Color color)
     glEnd();
 }
 
-
-//void Character::DrawCircle(GLint radius, GLfloat R, GLfloat G, GLfloat B)
-//{
-//    glPointSize(2);
-//    float theta;
-//    glColor3f(R, G, B);
-//    glBegin(GL_POINTS);
-//        for(int i = 0; i < 360/20; i++) {
-//            theta = i*20*3.14/180;
-//            glVertex2f(radius*cos(theta), radius*sin(theta));
-//        }
-//    glEnd();
-//}
-
-void Character::DrawWheel(GLfloat x, GLfloat y, GLfloat thetaWheel, Color color)
+void Character::DrawCircleDashed(GLint radius, Color color)
 {
-    glPushMatrix();
-    glTranslatef(x, y, 0);
-    glRotatef(thetaWheel, 0, 0, 1);
-    this->DrawCircle(radiusWheel, color);
-    glPopMatrix();
+    glPointSize(2);
+    float theta;
+    glColor3f(color.R, color.G, color.B);
+    glBegin(GL_POINTS);
+        for(int i = 0; i < 360/10; i++) {
+            theta = i*10*3.14/180;
+            glVertex2f(radius*cos(theta), radius*sin(theta));
+        }
+    glEnd();
 }
 
 //void Character::DrawArms(GLfloat x, GLfloat y, GLfloat theta1, GLfloat theta2, GLfloat theta3)
@@ -95,13 +85,12 @@ void Character::DrawLeftArms(GLfloat x, GLfloat y)
     
     glTranslatef(x, y, 0); /* Move to left arm base */
     glRotatef(this->leftArmFirstJointAngle, 0, 0, 1);
+    this->DrawCircle(5, this->armsColor); /* Smooth joint */
     this->DrawRectangle(firstPaddleHeight, paddleWidth, this->armsColor);
     
     glTranslatef(0, firstPaddleHeight, 0);  /* Move to second left arm joint */
     glRotatef(this->leftArmSecondJointAngle, 0, 0, 1);
-    
-    this->DrawCircle(5, this->armsColor);
-    
+    this->DrawCircle(5, this->armsColor); /* Smooth joint */
     this->DrawRectangle(secondPaddleHeight, paddleWidth, this->armsColor);
     
     glTranslatef(0, secondPaddleHeight, 0);  /* Move to second right arm tip */
@@ -117,11 +106,12 @@ void Character::DrawRightArms(GLfloat x, GLfloat y)
     
     glTranslatef(x, y, 0); /* Move to right arm base */
     glRotatef(this->rightArmFirstJointAngle, 0, 0, 1);
+    this->DrawCircle(5, this->armsColor); /* Smooth joint */
     this->DrawRectangle(firstPaddleHeight, paddleWidth, this->armsColor);
-    
     
     glTranslatef(0, firstPaddleHeight, 0);  /* Move to second right arm joint */
     glRotatef(this->rightArmSecondJointAngle, 0, 0, 1);
+    this->DrawCircle(5, this->armsColor); /* Smooth joint */
     this->DrawRectangle(secondPaddleHeight, paddleWidth, this->armsColor);
     
     glTranslatef(0, secondPaddleHeight, 0);  /* Move to second right arm tip */
@@ -133,7 +123,14 @@ void Character::DrawRightArms(GLfloat x, GLfloat y)
 
 void Character::RotateLeftArm(GLfloat inc)
 {
-    
+    this->leftArmFirstJointAngle += inc;
+    this->leftArmSecondJointAngle -= inc/1.7;
+}
+
+void Character::RotateRightArm(GLfloat inc)
+{
+    this->rightArmFirstJointAngle -= inc;
+    this->rightArmSecondJointAngle += inc/1.7;
 }
 
 void Character::DrawHand()
@@ -163,12 +160,15 @@ void Character::DrawCharacter(GLfloat x, GLfloat y, GLfloat thetaWheel, GLfloat 
     glPushMatrix();
     glTranslatef(x, y, 0);
     
+    this->DrawLeftArms(-torsoRadius, 0);
+    this->DrawRightArms(torsoRadius, 0);
+    
+    
+    /* Draw torso above arm*/
     this->DrawTorso();
     this->DrawNose();
     
-    
-    this->DrawLeftArms(-torsoRadius, 0);
-    this->DrawRightArms(torsoRadius, 0);
+    this->DrawCircleDashed(outsideRadius, Color(255, 255, 255));
     
 //    this->DrawRectangle(baseHeight, baseWidth, 1, 0, 0);
 //    this->DrawArms(0, baseHeight, theta1, theta2, theta3);

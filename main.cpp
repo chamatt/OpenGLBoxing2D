@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include "framework.h"
 #include "character.h"
-#define INC_KEY 5
+#define INC_KEY 13
 #define INC_KEYIDLE 2
 
 #define PI 3.14
@@ -89,14 +89,26 @@ void keyPress(unsigned char key, int x, int y)
         case 'D':
              keyStatus[(int)('d')] = 1; //Using keyStatus trick
              break;
-//        case 'f':
-//        case 'F':
+        case 'f':
+        case 'F':
 //             robo.RodaBraco1(-INC_KEY);   //Without keyStatus trick
-//             break;
-//        case 'r':
-//        case 'R':
+             character.RotateLeftArm(+INC_KEY);
+             break;
+        case 'r':
+        case 'R':
 //             robo.RodaBraco1(+INC_KEY);   //Without keyStatus trick
-//             break;
+             character.RotateLeftArm(-INC_KEY);
+             break;
+        case 'g':
+        case 'G':
+//             robo.RodaBraco1(-INC_KEY);   //Without keyStatus trick
+             character.RotateRightArm(+INC_KEY);
+             break;
+        case 't':
+        case 'T':
+//             robo.RodaBraco1(+INC_KEY);   //Without keyStatus trick
+             character.RotateRightArm(-INC_KEY);
+             break;
 //        case 'g':
 //        case 'G':
 //             robo.RodaBraco2(-INC_KEY);   //Without keyStatus trick

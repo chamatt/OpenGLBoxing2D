@@ -23,6 +23,8 @@
 #define handRadius 15
 #define noseRadius 5
 
+#define outsideRadius 102
+
 class Character {
     Color torsoColor;
     Color torsoStroke;
@@ -48,6 +50,7 @@ private:
     void DrawRectangle(GLint height, GLint width, Color color);
     void DrawCircle(GLint radius, Color color);
     void DrawStroke(GLint radius, Color color);
+    void DrawCircleDashed(GLint radius, Color color);
     void DrawWheel(GLfloat x, GLfloat y, GLfloat thetaWheel, Color color);
     void DrawArms(GLfloat x, GLfloat y, GLfloat theta1,
                     GLfloat theta2, GLfloat theta3);
