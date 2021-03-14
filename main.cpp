@@ -62,10 +62,6 @@ void renderScene(void)
      glClear(GL_COLOR_BUFFER_BIT);
  
      character.Draw();
-     
-//     if (tiro) tiro->Desenha();
-     
-//     alvo.Desenha();
     
      PrintScore(-ViewingWidth/2 + 20, -ViewingHeight/2 + 20);
 
@@ -89,46 +85,30 @@ void keyPress(unsigned char key, int x, int y)
         case 'D':
              keyStatus[(int)('d')] = 1; //Using keyStatus trick
              break;
+        case 'w':
+        case 'W':
+             keyStatus[(int)('w')] = 1; //Using keyStatus trick
+             break;
+        case 's':
+        case 'S':
+             keyStatus[(int)('s')] = 1; //Using keyStatus trick
+             break;
         case 'f':
         case 'F':
-//             robo.RodaBraco1(-INC_KEY);   //Without keyStatus trick
              character.RotateLeftArm(+INC_KEY);
              break;
         case 'r':
         case 'R':
-//             robo.RodaBraco1(+INC_KEY);   //Without keyStatus trick
              character.RotateLeftArm(-INC_KEY);
              break;
         case 'g':
         case 'G':
-//             robo.RodaBraco1(-INC_KEY);   //Without keyStatus trick
              character.RotateRightArm(+INC_KEY);
              break;
         case 't':
         case 'T':
-//             robo.RodaBraco1(+INC_KEY);   //Without keyStatus trick
              character.RotateRightArm(-INC_KEY);
              break;
-//        case 'g':
-//        case 'G':
-//             robo.RodaBraco2(-INC_KEY);   //Without keyStatus trick
-//             break;
-//        case 't':
-//        case 'T':
-//             robo.RodaBraco2(+INC_KEY);   //Without keyStatus trick
-//             break;
-//        case 'h':
-//        case 'H':
-//             robo.RodaBraco3(-INC_KEY);   //Without keyStatus trick
-//             break;
-//        case 'y':
-//        case 'Y':
-//             robo.RodaBraco3(+INC_KEY);   //Without keyStatus trick
-//             break;
-//        case ' ':
-//             if (!tiro)
-//                tiro = robo.Atira();
-//             break;
         case 27 :
              exit(0);
     }
@@ -192,11 +172,20 @@ void idle(void)
     //Treat keyPress
     if(keyStatus[(int)('a')])
     {
-        character.MoveInX(moveByTime(-inc));
+        character.RotateBody(moveByTime(-inc));
     }
     if(keyStatus[(int)('d')])
     {
-        character.MoveInX(moveByTime(inc));
+        character.RotateBody(moveByTime(inc));
+    }
+    
+    if(keyStatus[(int)('w')])
+    {
+        character.MoveForward(moveByTime(inc));
+    }
+    if(keyStatus[(int)('s')])
+    {
+        character.MoveForward(moveByTime(-inc));
     }
     
 //    //Trata o tiro (soh permite um tiro por vez)

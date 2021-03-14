@@ -41,10 +41,7 @@ class Character {
     
     GLfloat gX;
     GLfloat gY;
-    GLfloat gTheta1;
-    GLfloat gTheta2;
-    GLfloat gTheta3;
-    GLfloat gThetaWheel;
+    GLfloat gTheta;
     GLfloat direction;
 private:
     void DrawRectangle(GLint height, GLint width, Color color);
@@ -59,17 +56,13 @@ private:
     void DrawTorso();
     void DrawNose();
     void DrawHand();
-    void DrawCharacter( GLfloat x, GLfloat y, GLfloat thetaWheel,
-                    GLfloat theta1, GLfloat theta2, GLfloat theta3);
+    void DrawCharacter(GLfloat x, GLfloat y);
 
 public:
     Character(){
         gX = 0;
         gY = -200;
-        gTheta1 = 0;
-        gTheta2 = 0;
-        gTheta3 = 0;
-        gThetaWheel = 0;
+        gTheta = 0;
         
         torsoColor = Color(90, 128, 184);
         torsoStroke = Color(64, 92, 134);
@@ -80,15 +73,12 @@ public:
         handStroke = Color(130, 61, 57);
     };
     void Draw(){
-        DrawCharacter(gX, gY, gThetaWheel, gTheta1,
-                gTheta2, gTheta3);
+        DrawCharacter(gX, gY);
     };
     void RotateLeftArm(GLfloat inc);
     void RotateRightArm(GLfloat inc);
-    void RotateArm1(GLfloat inc);
-    void RotateArm2(GLfloat inc);
-    void RotateArm3(GLfloat inc);
-    void MoveInX(GLfloat dx);
+    void RotateBody(GLfloat inc);
+    void MoveForward(GLfloat dx);
     GLfloat GetX(){
         return gX;
     };
