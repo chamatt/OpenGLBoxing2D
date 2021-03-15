@@ -10,6 +10,7 @@
 
 #ifndef character_hpp
 #define character_hpp
+#include "game.h"
 #include "framework.h"
 // Dimensions
 #define firstPaddleHeight 50
@@ -19,7 +20,11 @@
 #define baseWidth 100
 #define radiusWheel 30
 
+class Game;
+
 class Character {
+    Game* gameObject;
+    
     Color torsoColor;
     Color torsoStroke;
     Color noseColor;
@@ -57,7 +62,7 @@ private:
     void DrawHand();
     void DrawCharacter(GLfloat x, GLfloat y);
     
-    Transformation* moveForwareTransform(GLfloat dx) {
+    Transformation* moveForwardTransform(GLfloat dx) {
         Transformation* tr = new Transformation();
         tr->translate2d(gX, gY);
         tr->rotate2d(gTheta);
@@ -66,24 +71,7 @@ private:
     }
 
 public:
-    Character(GLfloat size){
-        gX = 0;
-        gY = -200;
-        gTheta = 0;
-        
-        torsoColor = Color(90, 128, 184);
-        torsoStroke = Color(64, 92, 134);
-        noseColor = Color(90, 128, 184);
-        noseStroke = Color(64, 92, 134);
-        armsColor = Color(161, 186, 102);
-        handColor = Color(179, 87, 81);
-        handStroke = Color(130, 61, 57);
-        
-        this->torsoRadius = size;
-        this->handRadius = (3.0/4.0) * size;
-        this->noseRadius = size / 4;
-        this->outsideRadius = size * 5;
-    };
+    Character(Game* game, GLfloat size);
     
     void setInitialPos(GLfloat x, GLfloat y, GLfloat angle) {
         this->gX = x;
@@ -91,18 +79,11 @@ public:
         this->gTheta = angle;
     }
     
-    bool willColide(Character &another, GLfloat dx) {
-        GLfloat intersectionRadius = this->torsoRadius + another.outsideRadius;
-        
-        Point2D* anotherPoint = new Point2D(another.gX, another.gY);
-        
-        Point2D* thisPoint = new Point2D(0, 0);
-        moveForwareTransform(dx)->apply(thisPoint);
-        
-        cout << "dx: " << dx << "distance: " << anotherPoint->distanceTo(thisPoint) << "radius: " << intersectionRadius << endl;
-        
-        return anotherPoint->distanceTo(thisPoint) < intersectionRadius;
-    }
+    bool willColideWithGameWalls(GLfloat dx);
+    
+    bool willColideWithOtherPlayer(Character* another, GLfloat dx);
+    
+    bool willColide(Game* game, GLfloat dx);
     
     void Draw(){
         DrawCharacter(gX, gY);
@@ -110,7 +91,7 @@ public:
     void RotateLeftArm(GLfloat inc);
     void RotateRightArm(GLfloat inc);
     void RotateBody(GLfloat inc);
-    void MoveForward(GLfloat dx);
+    void MoveForward(Game* game, GLfloat dx);
     GLfloat GetX(){
         return gX;
     };

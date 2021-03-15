@@ -19,6 +19,65 @@ using namespace std;
 
 void initFramework();
 
+class Point2D {
+    public:
+        GLfloat x;
+        GLfloat y;
+
+        Point2D(GLfloat x, GLfloat y){
+            this->x = x;
+            this->y = y;
+        };
+    
+        GLfloat distanceTo(Point2D* another) {
+            return sqrt(pow(this->x - another->x, 2) + pow(this->y - another->y, 2));
+        }
+};
+
+class Circle {
+public:
+    GLfloat x;
+    GLfloat y;
+    Point2D point;
+    GLfloat radius;
+    
+    Circle(GLfloat px, GLfloat py, GLfloat pradius) : x(px), y(py), radius(pradius), point(Point2D(px, py)) {
+     
+    }
+};
+
+class Rectangle {
+public:
+    GLfloat x;
+    GLfloat y;
+    GLfloat width;
+    GLfloat height;
+    
+    Rectangle(GLfloat px, GLfloat py, GLfloat pwidth, GLfloat pheight) : x(px), y(px), width(pwidth), height(pheight) {}
+};
+
+class Collision {
+public:
+    
+    static bool circleInsideRectIntersect(Circle circle, Rectangle rect) {
+        GLfloat leftWall = rect.x;
+        GLfloat rightWall = rect.x + rect.width;
+        GLfloat bottomWall = rect.y;
+        GLfloat topWall = rect.y + rect.height;
+        
+        if(circle.x - circle.radius < leftWall) return true;
+        if(circle.x + circle.radius > rightWall) return true;
+        if(circle.y - circle.radius < bottomWall) return true;
+        if(circle.y + circle.radius > topWall) return true;
+        return false;
+    }
+    
+    static bool circleCircleIntersect(Circle circle1, Circle circle2) {
+        GLfloat intersectionRadius = circle1.radius + circle2.radius;
+        return circle2.point.distanceTo(&circle1.point) < intersectionRadius;
+    }
+};
+
 class Random {
     public:
         GLfloat number;
@@ -53,20 +112,6 @@ public:
     }
 };
 
-class Point2D {
-    public:
-        GLfloat x;
-        GLfloat y;
-
-        Point2D(GLfloat x, GLfloat y){
-            this->x = x;
-            this->y = y;
-        };
-    
-        GLfloat distanceTo(Point2D* another) {
-            return sqrt(pow(this->x - another->x, 2) + pow(this->y - another->y, 2));
-        }
-};
 
 class Transformation {
     private:

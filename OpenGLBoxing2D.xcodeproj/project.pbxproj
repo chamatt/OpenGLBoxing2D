@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		901FC17A25FECBCD00499C57 /* Game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
-		901FC17B25FECBCD00499C57 /* Game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		901FC17A25FECBCD00499C57 /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
+		901FC17B25FECBCD00499C57 /* game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
 		90F480AC25FDA4A200B1C69C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		90F480AD25FDA52C00B1C69C /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		90F480AE25FDA52C00B1C69C /* framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framework.h; sourceTree = "<group>"; };
@@ -23,8 +23,8 @@
 		90F480A125FDA43B00B1C69C = {
 			isa = PBXGroup;
 			children = (
-				901FC17A25FECBCD00499C57 /* Game.cpp */,
-				901FC17B25FECBCD00499C57 /* Game.h */,
+				901FC17A25FECBCD00499C57 /* game.cpp */,
+				901FC17B25FECBCD00499C57 /* game.h */,
 				90F480B425FDA7F900B1C69C /* character.cpp */,
 				90F480B525FDA7F900B1C69C /* character.h */,
 				90F480AC25FDA4A200B1C69C /* README.md */,

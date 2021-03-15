@@ -3,9 +3,32 @@
 #include <vector>
 #include "character.h"
 #include "framework.h"
+#include "game.h"
 #define PI 3.14
 
 using namespace std;
+
+
+Character::Character(Game* game, GLfloat size){
+    this->gameObject = game;
+    
+    gX = 0;
+    gY = -200;
+    gTheta = 0;
+    
+    torsoColor = Color(90, 128, 184);
+    torsoStroke = Color(64, 92, 134);
+    noseColor = Color(90, 128, 184);
+    noseStroke = Color(64, 92, 134);
+    armsColor = Color(161, 186, 102);
+    handColor = Color(179, 87, 81);
+    handStroke = Color(130, 61, 57);
+    
+    this->torsoRadius = size;
+    this->handRadius = (3.0/4.0) * size;
+    this->noseRadius = size / 4;
+    this->outsideRadius = size * 4.0;
+};
 
 void Character::DrawRectangle(GLint height, GLint width, Color color)
 {
@@ -104,12 +127,16 @@ void Character::DrawRightArms(GLfloat x, GLfloat y)
 
 void Character::RotateLeftArm(GLfloat inc)
 {
+    inc = this->gameObject->applyTimeFix(inc);
+    
     this->leftArmFirstJointAngle += inc;
     this->leftArmSecondJointAngle -= inc/1.7;
 }
 
 void Character::RotateRightArm(GLfloat inc)
 {
+    inc = this->gameObject->applyTimeFix(inc);
+    
     this->rightArmFirstJointAngle -= inc;
     this->rightArmSecondJointAngle += inc/1.7;
 }
@@ -156,14 +183,50 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
     glPopMatrix();
 }
 
-void Character::MoveForward(GLfloat dx) {
+void Character::MoveForward(Game* game, GLfloat dx) {
+    dx = this->gameObject->applyTimeFix(dx);
+    
     Point2D* charPosition = new Point2D(0, 0);
-    moveForwareTransform(dx)->apply(charPosition);
+    
+    if(willColide(game, dx)) return;
+    
+    moveForwardTransform(dx)->apply(charPosition);
     
     this->gX = charPosition->x;
     this->gY = charPosition->y;
 }
 
+bool Character::willColideWithOtherPlayer(Character* another, GLfloat dx) {
+    if(another == this) return false;
+    Point2D* thisPoint = new Point2D(0, 0);
+    moveForwardTransform(dx)->apply(thisPoint);
+    
+    Circle thisCircle = Circle(thisPoint->x, thisPoint->y, this->torsoRadius);
+    Circle anotherCircle = Circle(another->gX, another->gY, this->outsideRadius);
+    return Collision::circleCircleIntersect(thisCircle, anotherCircle);
+}
+
+bool Character::willColideWithGameWalls(GLfloat dx) {
+    Rectangle rect = Rectangle(-this->gameObject->ViewingWidth/2, -this->gameObject->ViewingHeight/2, this->gameObject->ViewingWidth, this->gameObject->ViewingHeight);
+
+    Point2D* thisPoint = new Point2D(0, 0);
+    moveForwardTransform(dx)->apply(thisPoint);
+    Circle circ = Circle(thisPoint->x, thisPoint->y, this->outsideRadius);
+
+    bool isIntersecting = Collision::circleInsideRectIntersect(circ, rect);
+    return isIntersecting;
+}
+
+
+bool Character::willColide(Game* game, GLfloat dx) {
+    dx = this->gameObject->applyTimeFix(dx);
+    if(willColideWithOtherPlayer(game->player1, dx)) return true;
+    if(willColideWithOtherPlayer(game->player2, dx)) return true;
+    if(willColideWithGameWalls(dx)) return true;
+    return false;
+}
+
 void Character::RotateBody(GLfloat inc) {
+    inc = this->gameObject->applyTimeFix(inc);
     this->gTheta -= inc;
 }

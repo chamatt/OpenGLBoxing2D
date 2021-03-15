@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include "framework.h"
 #include "character.h"
-#include "Game.h"
+#include "game.h"
 #define INC_KEY 13
 #define INC_KEYIDLE 2
 
@@ -26,8 +26,8 @@ void renderScene(void)
      // Clear the screen.
      glClear(GL_COLOR_BUFFER_BIT);
  
-     game.player1.Draw();
-     game.player2.Draw();
+     game.player1->Draw();
+     game.player2->Draw();
     
      game.PrintScore();
 
@@ -88,31 +88,32 @@ void frameCorrectionFix() {
 
 void idle(void)
 {
-    frameCorrectionFix();
+    game.frameCorrectionFix();
     
     double inc = INC_KEYIDLE;
     //Treat keyPress
     if(game.isKeyPressed('a'))
     {
-        game.player1.RotateBody(moveByTime(-inc));
+        game.player1->RotateBody(-inc);
     }
     if(game.isKeyPressed('d'))
     {
-        game.player1.RotateBody(moveByTime(inc));
+        game.player1->RotateBody(inc);
     }
     
     if(game.isKeyPressed('w'))
     {
-        if(!game.player1.willColide(game.player2, moveByTime(inc))) {
-            game.player1.MoveForward(moveByTime(inc));
-        }
+        game.player1->MoveForward(&game, inc);
     }
     if(game.isKeyPressed('s'))
     {
-        if(!game.player1.willColide(game.player2, moveByTime(-inc))) {
-            game.player1.MoveForward(moveByTime(-inc));
-        }
+        game.player1->MoveForward(&game, -inc);
     }
+    
+    if(true) {
+        game.player2->MoveForward(&game, inc);
+    }
+    
     
 //    //Trata o tiro (soh permite um tiro por vez)
 //    //Poderia usar uma lista para tratar varios tiros
@@ -155,8 +156,9 @@ void keyPress(unsigned char key, int x, int y) {
 int main(int argc, char *argv[])
 {
     initFramework();
-    game.setPlayerStartPosition(game.player1, -200, -200, -45);
-    game.setPlayerStartPosition(game.player2, 200, 200, 120);
+    game.initializeCharacters(20, 20);
+    game.setPlayerStartPosition(game.player1, -150, -150, -45);
+    game.setPlayerStartPosition(game.player2, 150, 150, 120);
     
     // Initialize openGL with Double buffer and RGB color without transparency.
     // Its interesting to try GLUT_SINGLE instead of GLUT_DOUBLE.
