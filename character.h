@@ -19,12 +19,6 @@
 #define baseWidth 100
 #define radiusWheel 30
 
-#define torsoRadius 20
-#define handRadius 15
-#define noseRadius 5
-
-#define outsideRadius 102
-
 class Character {
     Color torsoColor;
     Color torsoStroke;
@@ -33,6 +27,11 @@ class Character {
     Color armsColor;
     Color handColor;
     Color handStroke;
+    
+    GLfloat torsoRadius;
+    GLfloat handRadius;
+    GLfloat noseRadius;
+    GLfloat outsideRadius;
     
     GLfloat leftArmFirstJointAngle = 120;
     GLfloat leftArmSecondJointAngle = -120;
@@ -57,9 +56,17 @@ private:
     void DrawNose();
     void DrawHand();
     void DrawCharacter(GLfloat x, GLfloat y);
+    
+    Transformation* moveForwareTransform(GLfloat dx) {
+        Transformation* tr = new Transformation();
+        tr->translate2d(gX, gY);
+        tr->rotate2d(gTheta);
+        tr->translate2d(0, dx);
+        return tr;
+    }
 
 public:
-    Character(){
+    Character(GLfloat size){
         gX = 0;
         gY = -200;
         gTheta = 0;
@@ -71,7 +78,32 @@ public:
         armsColor = Color(161, 186, 102);
         handColor = Color(179, 87, 81);
         handStroke = Color(130, 61, 57);
+        
+        this->torsoRadius = size;
+        this->handRadius = (3.0/4.0) * size;
+        this->noseRadius = size / 4;
+        this->outsideRadius = size * 5;
     };
+    
+    void setInitialPos(GLfloat x, GLfloat y, GLfloat angle) {
+        this->gX = x;
+        this->gY = y;
+        this->gTheta = angle;
+    }
+    
+    bool willColide(Character &another, GLfloat dx) {
+        GLfloat intersectionRadius = this->torsoRadius + another.outsideRadius;
+        
+        Point2D* anotherPoint = new Point2D(another.gX, another.gY);
+        
+        Point2D* thisPoint = new Point2D(0, 0);
+        moveForwareTransform(dx)->apply(thisPoint);
+        
+        cout << "dx: " << dx << "distance: " << anotherPoint->distanceTo(thisPoint) << "radius: " << intersectionRadius << endl;
+        
+        return anotherPoint->distanceTo(thisPoint) < intersectionRadius;
+    }
+    
     void Draw(){
         DrawCharacter(gX, gY);
     };

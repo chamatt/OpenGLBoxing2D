@@ -13,111 +13,33 @@
 #include <stdio.h>
 #include "framework.h"
 #include "character.h"
+#include "Game.h"
 #define INC_KEY 13
 #define INC_KEYIDLE 2
 
 #define PI 3.14
 
-//Key status
-int keyStatus[256];
-
-// Window dimensions
-const GLint Width = 700;
-const GLint Height = 700;
-
-// Viewing dimensions
-const GLint ViewingWidth = 500;
-const GLint ViewingHeight = 500;
-
-//Controla a animacao do robo
-int animate = 0;
-
-//Componentes do mundo virtual sendo modelado
-Character character; //Um rodo
-//Tiro * tiro = NULL; //Um tiro por vez
-//Alvo alvo(0, 200); //Um alvo por vez
-
-int score = 0;
-static char str[1000];
-void * font = GLUT_BITMAP_9_BY_15;
-void PrintScore(GLfloat x, GLfloat y)
-{
-    glColor3f(1.0, 1.0, 1.0);
-    //Cria a string a ser impressa
-    char *tmpStr;
-    sprintf(str, "Score: %d", score);
-    //Define a posicao onde vai comecar a imprimir
-    glRasterPos2f(x, y);
-    //Imprime um caractere por vez
-    tmpStr = str;
-    while( *tmpStr ){
-        glutBitmapCharacter(font, *tmpStr);
-        tmpStr++;
-    }
-}
+Game game;
 
 void renderScene(void)
 {
      // Clear the screen.
      glClear(GL_COLOR_BUFFER_BIT);
  
-     character.Draw();
+     game.player1.Draw();
+     game.player2.Draw();
     
-     PrintScore(-ViewingWidth/2 + 20, -ViewingHeight/2 + 20);
+     game.PrintScore();
 
      glutSwapBuffers(); // Desenha the new frame of the game.
 }
 
 
 
-void keyPress(unsigned char key, int x, int y)
-{
-    switch (key)
-    {
-        case '1':
-             animate = !animate;
-             break;
-        case 'a':
-        case 'A':
-             keyStatus[(int)('a')] = 1; //Using keyStatus trick
-             break;
-        case 'd':
-        case 'D':
-             keyStatus[(int)('d')] = 1; //Using keyStatus trick
-             break;
-        case 'w':
-        case 'W':
-             keyStatus[(int)('w')] = 1; //Using keyStatus trick
-             break;
-        case 's':
-        case 'S':
-             keyStatus[(int)('s')] = 1; //Using keyStatus trick
-             break;
-        case 'f':
-        case 'F':
-             character.RotateLeftArm(+INC_KEY);
-             break;
-        case 'r':
-        case 'R':
-             character.RotateLeftArm(-INC_KEY);
-             break;
-        case 'g':
-        case 'G':
-             character.RotateRightArm(+INC_KEY);
-             break;
-        case 't':
-        case 'T':
-             character.RotateRightArm(-INC_KEY);
-             break;
-        case 27 :
-             exit(0);
-    }
-    glutPostRedisplay();
-}
 
 void keyup(unsigned char key, int x, int y)
 {
-    keyStatus[(int)(key)] = 0;
+    game.keyStatus[(int)(key)] = 0;
     glutPostRedisplay();
 }
 
@@ -126,7 +48,7 @@ void ResetKeyStatus()
     int i;
     //Initialize keyStatus
     for(i = 0; i < 256; i++)
-       keyStatus[i] = 0; 
+       game.keyStatus[i] = 0;
 }
 
 void init(void)
@@ -136,10 +58,10 @@ void init(void)
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black, no opacity(alpha).
  
     glMatrixMode(GL_PROJECTION); // Select the projection matrix    
-    glOrtho(-(ViewingWidth/2),     // X coordinate of left edge             
-            (ViewingWidth/2),     // X coordinate of right edge            
-            -(ViewingHeight/2),     // Y coordinate of bottom edge             
-            (ViewingHeight/2),     // Y coordinate of top edge             
+    glOrtho(-(game.ViewingWidth/2),     // X coordinate of left edge
+            (game.ViewingWidth/2),     // X coordinate of right edge
+            -(game.ViewingHeight/2),     // Y coordinate of bottom edge
+            (game.ViewingHeight/2),     // Y coordinate of top edge
             -100,     // Z coordinate of the “near” plane            
             100);    // Z coordinate of the “far” plane
     glMatrixMode(GL_MODELVIEW); // Select the projection matrix    
@@ -170,22 +92,26 @@ void idle(void)
     
     double inc = INC_KEYIDLE;
     //Treat keyPress
-    if(keyStatus[(int)('a')])
+    if(game.isKeyPressed('a'))
     {
-        character.RotateBody(moveByTime(-inc));
+        game.player1.RotateBody(moveByTime(-inc));
     }
-    if(keyStatus[(int)('d')])
+    if(game.isKeyPressed('d'))
     {
-        character.RotateBody(moveByTime(inc));
+        game.player1.RotateBody(moveByTime(inc));
     }
     
-    if(keyStatus[(int)('w')])
+    if(game.isKeyPressed('w'))
     {
-        character.MoveForward(moveByTime(inc));
+        if(!game.player1.willColide(game.player2, moveByTime(inc))) {
+            game.player1.MoveForward(moveByTime(inc));
+        }
     }
-    if(keyStatus[(int)('s')])
+    if(game.isKeyPressed('s'))
     {
-        character.MoveForward(moveByTime(-inc));
+        if(!game.player1.willColide(game.player2, moveByTime(-inc))) {
+            game.player1.MoveForward(moveByTime(-inc));
+        }
     }
     
 //    //Trata o tiro (soh permite um tiro por vez)
@@ -206,6 +132,7 @@ void idle(void)
 //    }
     
     
+    
 //    //Control animation
 //    if (animate){
 //        static int dir = 1;
@@ -220,22 +147,30 @@ void idle(void)
     
     glutPostRedisplay();
 }
+
+void keyPress(unsigned char key, int x, int y) {
+    game.keyPress(key, x, y);
+}
  
 int main(int argc, char *argv[])
 {
     initFramework();
+    game.setPlayerStartPosition(game.player1, -200, -200, -45);
+    game.setPlayerStartPosition(game.player2, 200, 200, 120);
+    
     // Initialize openGL with Double buffer and RGB color without transparency.
     // Its interesting to try GLUT_SINGLE instead of GLUT_DOUBLE.
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
  
     // Create the window.
-    glutInitWindowSize(Width, Height);
+    glutInitWindowSize(game.Width, game.Height);
     glutInitWindowPosition(150,50);
     glutCreateWindow("Boxing 2D");
  
     // Define callbacks.
     glutDisplayFunc(renderScene);
+    
     glutKeyboardFunc(keyPress);
     glutIdleFunc(idle);
     glutKeyboardUpFunc(keyup);

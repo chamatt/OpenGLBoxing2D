@@ -122,17 +122,17 @@ void Character::DrawHand()
 
 void Character::DrawTorso()
 {
-    this->DrawCircle(torsoRadius, this->torsoColor);
-    this->DrawStroke(torsoRadius, this->torsoStroke);
+    this->DrawCircle(this->torsoRadius, this->torsoColor);
+    this->DrawStroke(this->torsoRadius, this->torsoStroke);
 }
 void Character::DrawNose()
 {
     glPushMatrix();
-    glTranslatef(0, torsoRadius, 0);
+    glTranslatef(0, this->torsoRadius, 0);
     
-    glTranslatef(0, noseRadius, 0);
-    this->DrawCircle(noseRadius, this->noseColor);
-    this->DrawStroke(noseRadius, this->noseStroke);
+    glTranslatef(0, this->noseRadius, 0);
+    this->DrawCircle(this->noseRadius, this->noseColor);
+    this->DrawStroke(this->noseRadius, this->noseStroke);
     glPopMatrix();
 }
 
@@ -140,10 +140,11 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
 {
     glPushMatrix();
     glTranslatef(x, y, 0);
+    
     glRotatef(this->gTheta, 0, 0, 1);
     
-    this->DrawLeftArms(-torsoRadius, 0);
-    this->DrawRightArms(torsoRadius, 0);
+    this->DrawLeftArms(-this->torsoRadius, 0);
+    this->DrawRightArms(this->torsoRadius, 0);
     
     /* Draw torso above arm*/
     this->DrawTorso();
@@ -151,16 +152,13 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
     
     this->DrawCircleDashed(outsideRadius, Color(255, 255, 255));
     
+    this->DrawCircle(5, Color(255,255,0));
     glPopMatrix();
 }
 
 void Character::MoveForward(GLfloat dx) {
     Point2D* charPosition = new Point2D(0, 0);
-    Transformation* tr = new Transformation();
-    tr->translate2d(gX, gY);
-    tr->rotate2d(gTheta);
-    tr->translate2d(0, dx); /* Move to first paddle base */
-    tr->apply(charPosition);
+    moveForwareTransform(dx)->apply(charPosition);
     
     this->gX = charPosition->x;
     this->gY = charPosition->y;
