@@ -43,6 +43,9 @@ class Character {
     GLfloat rightArmFirstJointAngle = -120;
     GLfloat rightArmSecondJointAngle = 120;
     
+    bool isLeftPunching = false;
+    bool isRightPunching = false;
+    
     GLfloat gX;
     GLfloat gY;
     GLfloat gTheta;
@@ -86,12 +89,17 @@ public:
     bool willColide(Game* game, GLfloat dx);
     
     void Draw(){
+        if(!isLeftPunching) this->RotateLeftArm(1);
+        if(!isRightPunching) this->RotateLeftArm(1);
         DrawCharacter(gX, gY);
     };
-    void RotateLeftArm(GLfloat inc);
-    void RotateRightArm(GLfloat inc);
+    bool RotateLeftArm(GLfloat inc);
+    bool RotateRightArm(GLfloat inc);
     void RotateBody(GLfloat inc);
     void MoveForward(Game* game, GLfloat dx);
+    
+    void followCharacter(Game* game, Character* other, GLfloat dx);
+    
     GLfloat GetX(){
         return gX;
     };

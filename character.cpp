@@ -125,20 +125,45 @@ void Character::DrawRightArms(GLfloat x, GLfloat y)
     glPopMatrix();
 }
 
-void Character::RotateLeftArm(GLfloat inc)
+bool Character::RotateLeftArm(GLfloat inc)
 {
     inc = this->gameObject->applyTimeFix(inc);
+    
+    if(inc < 0) this->isLeftPunching = true;
+    
+    if(this->leftArmFirstJointAngle >= 120 && inc > 0) {
+        this->isLeftPunching = false;
+        return false;
+    }
+    else if(this->leftArmFirstJointAngle <= 45 && inc < 0) {
+        this->isLeftPunching = false;
+        return false;
+    }
     
     this->leftArmFirstJointAngle += inc;
     this->leftArmSecondJointAngle -= inc/1.7;
+    return true;
 }
 
-void Character::RotateRightArm(GLfloat inc)
+bool Character::RotateRightArm(GLfloat inc)
 {
     inc = this->gameObject->applyTimeFix(inc);
     
+    if(inc < 0) this->isRightPunching = true;
+    
+    if(this->rightArmFirstJointAngle <= -120 && inc > 0) {
+        this->isRightPunching = false;
+        return false;
+    }
+    else if(this->rightArmFirstJointAngle >= -45 && inc < 0) {
+        this->isRightPunching = false;
+        return false;
+    }
+    
     this->rightArmFirstJointAngle -= inc;
     this->rightArmSecondJointAngle += inc/1.7;
+    this->isRightPunching = false;
+    return true;
 }
 
 void Character::DrawHand()
@@ -184,8 +209,11 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
 }
 
 void Character::MoveForward(Game* game, GLfloat dx) {
+    cout << "MoveFowardByBefore: " << dx << endl;
     dx = this->gameObject->applyTimeFix(dx);
     
+    
+    cout << "MoveFowardBy: " << dx << endl;
     Point2D* charPosition = new Point2D(0, 0);
     
     if(willColide(game, dx)) return;
@@ -229,4 +257,15 @@ bool Character::willColide(Game* game, GLfloat dx) {
 void Character::RotateBody(GLfloat inc) {
     inc = this->gameObject->applyTimeFix(inc);
     this->gTheta -= inc;
+}
+
+void Character::followCharacter(Game* game, Character* other, GLfloat dx) {
+    Point2D* charPosition = new Point2D(0, 0);
+    
+    GLfloat angle = atan2(this->gY - other->gY, this->gX - other->gX);
+    GLfloat deg = (angle*180)/PI;
+    
+    this->gTheta = deg + 90;
+    
+    this->MoveForward(game, dx/2);
 }

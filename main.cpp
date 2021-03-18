@@ -89,8 +89,10 @@ void frameCorrectionFix() {
 void idle(void)
 {
     game.frameCorrectionFix();
-    
     double inc = INC_KEYIDLE;
+    
+    game.player2->followCharacter(&game, game.player1, inc);
+    
     //Treat keyPress
     if(game.isKeyPressed('a'))
     {
@@ -110,10 +112,7 @@ void idle(void)
         game.player1->MoveForward(&game, -inc);
     }
     
-    if(true) {
-        game.player2->MoveForward(&game, inc);
-    }
-    
+   
     
 //    //Trata o tiro (soh permite um tiro por vez)
 //    //Poderia usar uma lista para tratar varios tiros

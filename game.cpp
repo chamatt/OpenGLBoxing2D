@@ -42,6 +42,11 @@ void Game::keyPress(unsigned char key, int x, int y)
         case 'T':
              player1->RotateRightArm(-INC_KEY);
              break;
+            
+        case 'l':
+        case 'L':
+             keyStatus[(int)('l')] = 1; //Using keyStatus trick
+             break;
         case 27 :
              exit(0);
     }
