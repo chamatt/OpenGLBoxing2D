@@ -19,27 +19,24 @@
 
 #define PI 3.14
 
-Game game;
+Game* game;
 
 void renderScene(void)
 {
      // Clear the screen.
      glClear(GL_COLOR_BUFFER_BIT);
  
-     game.player1->Draw();
-     game.player2->Draw();
+     game->player1->Draw();
+     game->player2->Draw();
     
-     game.PrintScore();
+     game->PrintScore();
 
-     glutSwapBuffers(); // Desenha the new frame of the game.
+     glutSwapBuffers(); // Desenha the new frame of the game->
 }
-
-
-
 
 void keyup(unsigned char key, int x, int y)
 {
-    game.keyStatus[(int)(key)] = 0;
+    game->keyStatus[(int)(key)] = 0;
     glutPostRedisplay();
 }
 
@@ -48,7 +45,7 @@ void ResetKeyStatus()
     int i;
     //Initialize keyStatus
     for(i = 0; i < 256; i++)
-       game.keyStatus[i] = 0;
+       game->keyStatus[i] = 0;
 }
 
 void init(void)
@@ -58,10 +55,10 @@ void init(void)
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black, no opacity(alpha).
  
     glMatrixMode(GL_PROJECTION); // Select the projection matrix    
-    glOrtho(-(game.ViewingWidth/2),     // X coordinate of left edge
-            (game.ViewingWidth/2),     // X coordinate of right edge
-            -(game.ViewingHeight/2),     // Y coordinate of bottom edge
-            (game.ViewingHeight/2),     // Y coordinate of top edge
+    glOrtho(game->arena.x,     // X coordinate of left edge
+            game->arena.x + game->arena.width,     // X coordinate of right edge
+            game->arena.y,     // Y coordinate of bottom edge
+            game->arena.y + game->arena.height,     // Y coordinate of top edge
             -100,     // Z coordinate of the “near” plane            
             100);    // Z coordinate of the “far” plane
     glMatrixMode(GL_MODELVIEW); // Select the projection matrix    
@@ -88,28 +85,28 @@ void frameCorrectionFix() {
 
 void idle(void)
 {
-    game.frameCorrectionFix();
+    game->frameCorrectionFix();
     double inc = INC_KEYIDLE;
     
-    game.player2->followCharacter(&game, game.player1, inc);
+    game->player2->followCharacter(game, game->player1, inc);
     
     //Treat keyPress
-    if(game.isKeyPressed('a'))
+    if(game->isKeyPressed('a'))
     {
-        game.player1->RotateBody(-inc);
+        game->player1->RotateBody(-inc);
     }
-    if(game.isKeyPressed('d'))
+    if(game->isKeyPressed('d'))
     {
-        game.player1->RotateBody(inc);
+        game->player1->RotateBody(inc);
     }
     
-    if(game.isKeyPressed('w'))
+    if(game->isKeyPressed('w'))
     {
-        game.player1->MoveForward(&game, inc);
+        game->player1->MoveForward(game, inc);
     }
-    if(game.isKeyPressed('s'))
+    if(game->isKeyPressed('s'))
     {
-        game.player1->MoveForward(&game, -inc);
+        game->player1->MoveForward(game, -inc);
     }
     
    
@@ -149,15 +146,18 @@ void idle(void)
 }
 
 void keyPress(unsigned char key, int x, int y) {
-    game.keyPress(key, x, y);
+    game->keyPress(key, x, y);
 }
  
 int main(int argc, char *argv[])
 {
     initFramework();
-    game.initializeCharacters(20, 20);
-    game.setPlayerStartPosition(game.player1, -150, -150, -45);
-    game.setPlayerStartPosition(game.player2, 150, 150, 120);
+    
+    game = new Game(argv[1]);
+    
+//    game.initializeCharacters(20, 20);
+//    game.setPlayerStartPosition(game.player1, -150, -150, -45);
+//    game.setPlayerStartPosition(game.player2, 150, 150, 120);
     
     // Initialize openGL with Double buffer and RGB color without transparency.
     // Its interesting to try GLUT_SINGLE instead of GLUT_DOUBLE.
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
  
     // Create the window.
-    glutInitWindowSize(game.Width, game.Height);
+    glutInitWindowSize(game->arena.width, game->arena.height);
     glutInitWindowPosition(150,50);
     glutCreateWindow("Boxing 2D");
  

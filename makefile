@@ -42,4 +42,4 @@ clean:
 	rm -rf *.o $(PROJ_NAME) *~
 
 run: $(PROJ_NAME)
-	./$(PROJ_NAME)
+	./$(PROJ_NAME) $(ARGS)

@@ -9,6 +9,12 @@
 /* Begin PBXFileReference section */
 		901FC17A25FECBCD00499C57 /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
 		901FC17B25FECBCD00499C57 /* game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
+		905F384A2606E55C0061448D /* tinyxml2lib.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml2lib.cpp; sourceTree = "<group>"; };
+		905F384B2606E55C0061448D /* tinyxml2lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinyxml2lib.h; sourceTree = "<group>"; };
+		905F384C2606E5C20061448D /* xmlparser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = xmlparser.cpp; sourceTree = "<group>"; };
+		905F384D2606E5C20061448D /* xmlparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xmlparser.h; sourceTree = "<group>"; };
+		905F384E2606E98C0061448D /* game-config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "game-config.cpp"; sourceTree = "<group>"; };
+		905F384F2606E98C0061448D /* game-config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "game-config.h"; sourceTree = "<group>"; };
 		90B98C4A2603A0FD005403C2 /* mouse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mouse.cpp; sourceTree = "<group>"; };
 		90B98C4B2603A0FD005403C2 /* mouse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mouse.h; sourceTree = "<group>"; };
 		90F480AC25FDA4A200B1C69C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -29,6 +35,12 @@
 				901FC17B25FECBCD00499C57 /* game.h */,
 				90F480B425FDA7F900B1C69C /* character.cpp */,
 				90F480B525FDA7F900B1C69C /* character.h */,
+				905F384A2606E55C0061448D /* tinyxml2lib.cpp */,
+				905F384B2606E55C0061448D /* tinyxml2lib.h */,
+				905F384C2606E5C20061448D /* xmlparser.cpp */,
+				905F384D2606E5C20061448D /* xmlparser.h */,
+				905F384E2606E98C0061448D /* game-config.cpp */,
+				905F384F2606E98C0061448D /* game-config.h */,
 				90B98C4A2603A0FD005403C2 /* mouse.cpp */,
 				90B98C4B2603A0FD005403C2 /* mouse.h */,
 				90F480AC25FDA4A200B1C69C /* README.md */,
@@ -50,7 +62,7 @@
 /* Begin PBXLegacyTarget section */
 		90F480A625FDA43B00B1C69C /* OpenGLBoxing2D */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = run;
+			buildArgumentsString = "run ARGS=\"/Users/matheusleanon/Documents/Code/OpenGLBoxing2D/examples/arena_2.svg\"";
 			buildConfigurationList = 90F480A925FDA43B00B1C69C /* Build configuration list for PBXLegacyTarget "OpenGLBoxing2D" */;
 			buildPhases = (
 			);

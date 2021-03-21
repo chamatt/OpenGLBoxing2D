@@ -17,6 +17,7 @@
 #include <vector>
 #include "character.h"
 #include "framework.h"
+#include "game-config.h"
 
 #define INC_KEY 13
 #define INC_KEYIDLE 2
@@ -31,12 +32,14 @@ public:
     int keyStatus[256];
 
     // Window dimensions
-    const GLint Width = 700;
-    const GLint Height = 700;
+    GLint Width = 700;
+    GLint Height = 700;
 
     // Viewing dimensions
-    const GLint ViewingWidth = 500;
-    const GLint ViewingHeight = 500;
+    GLint ViewingWidth = 500;
+    GLint ViewingHeight = 500;
+    
+    Rectangle arena = Rectangle(0,0,0,0);
     
     Character* player1;
     Character* player2;
@@ -54,7 +57,8 @@ public:
         previousTime = currentTime;
     }
     
-    Game() { }
+    Game();
+    Game(string xmlPath);
     
     void initializeCharacters(GLfloat sizep1, GLfloat sizep2);
     
@@ -63,7 +67,7 @@ public:
     void * font = GLUT_BITMAP_9_BY_15;
     void PrintScore()
     {
-       GLfloat x = -this->ViewingWidth/2 + 20, y = -this->ViewingHeight/2 + 20;
+       GLfloat x = this->arena.x+20, y = this->arena.y+20;
        glColor3f(1.0, 1.0, 1.0);
        //Cria a string a ser impressa
        char *tmpStr;
@@ -86,8 +90,6 @@ public:
     }
     
     void setPlayerStartPosition(Character* pl, GLfloat x, GLfloat y, GLfloat angle);
-    
- 
 };
 
 #endif /* Game_hpp */

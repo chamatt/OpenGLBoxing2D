@@ -33,6 +33,10 @@ class Character {
     Color handColor;
     Color handStroke;
     
+    GLfloat armLength;
+    GLfloat foreArmLength;
+    GLfloat armWidth;
+    
     GLfloat torsoRadius;
     GLfloat handRadius;
     GLfloat noseRadius;
@@ -46,10 +50,7 @@ class Character {
     bool isLeftPunching = false;
     bool isRightPunching = false;
     
-    GLfloat gX;
-    GLfloat gY;
-    GLfloat gTheta;
-    GLfloat direction;
+    
 private:
     void DrawRectangle(GLint height, GLint width, Color color);
     void DrawCircle(GLint radius, Color color);
@@ -74,7 +75,14 @@ private:
     }
 
 public:
+    
+    GLfloat gX;
+    GLfloat gY;
+    GLfloat gTheta;
+    GLfloat direction;
+    
     Character(Game* game, GLfloat size);
+    Character(Game* game, GLfloat size, Point2D position, GLfloat angle);
     
     void setInitialPos(GLfloat x, GLfloat y, GLfloat angle) {
         this->gX = x;
@@ -106,6 +114,10 @@ public:
     GLfloat GetY(){
         return gY;
     };
+    
+    Color color;
+    
+    void setColor(Color _color);
 };
 
 #endif /* character_hpp */

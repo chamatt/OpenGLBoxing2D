@@ -1,5 +1,7 @@
 #include "game.h"
 #include "character.h"
+#include "game-config.h"
+#include "xmlparser.h"
 
 void Game::initializeCharacters(GLfloat sizep1, GLfloat sizep2){
     this->player1 = new Character(this, 20);
@@ -56,4 +58,21 @@ void Game::keyPress(unsigned char key, int x, int y)
 
 void Game::setPlayerStartPosition(Character* pl, GLfloat x, GLfloat y, GLfloat angle) {
     pl->setInitialPos(x, y, angle);
+}
+
+Game::Game(string xmlPath) {
+    GameInitObject initObject = XMLParser::parseArena(xmlPath);
+
+    cout<<"aaaaaaaa: "<<initObject.player1.angle<< ","<<initObject.player2.angle<<endl;
+    
+    this->player1 = new Character(this, initObject.player1.headSize, initObject.player1.position,  initObject.player1.angle - 90);
+    this->player1->setColor(Color(90, 128, 184));
+    this->player2 = new Character(this, initObject.player2.headSize, initObject.player2.position,  initObject.player2.angle - 90);
+    this->player2->setColor(Color(78, 173, 71));
+
+    this->arena = initObject.arena;
+}
+
+Game::Game() {
+    this->arena = Rectangle(0,0,0,0);
 }

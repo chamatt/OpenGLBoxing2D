@@ -28,6 +28,35 @@ Character::Character(Game* game, GLfloat size){
     this->handRadius = (3.0/4.0) * size;
     this->noseRadius = size / 4;
     this->outsideRadius = size * 4.0;
+    
+    this->armLength = size*1.5;
+    this->foreArmLength = size*1.75;
+    this->armWidth = size/3;
+};
+
+Character::Character(Game* game, GLfloat size, Point2D position, GLfloat angle){
+    this->gameObject = game;
+    
+    torsoColor = Color(90, 128, 184);
+    torsoStroke = Color(64, 92, 134);
+    noseColor = Color(90, 128, 184);
+    noseStroke = Color(64, 92, 134);
+    armsColor = Color(161, 186, 102);
+    handColor = Color(179, 87, 81);
+    handStroke = Color(130, 61, 57);
+    
+    this->torsoRadius = size;
+    this->handRadius = (3.0/4.0) * size;
+    this->noseRadius = size / 4;
+    this->outsideRadius = size * 3.0;
+    
+    this->armLength = size*1.5;
+    this->foreArmLength = size*1.75;
+    this->armWidth = size/3;
+    
+    this->gX = position.x;
+    this->gY = position.y;
+    this->gTheta = angle;
 };
 
 void Character::DrawRectangle(GLint height, GLint width, Color color)
@@ -89,15 +118,15 @@ void Character::DrawLeftArms(GLfloat x, GLfloat y)
     
     glTranslatef(x, y, 0); /* Move to left arm base */
     glRotatef(this->leftArmFirstJointAngle, 0, 0, 1);
-    this->DrawCircle(5, this->armsColor); /* Smooth joint */
-    this->DrawRectangle(firstPaddleHeight, paddleWidth, this->armsColor);
+    this->DrawCircle(this->armWidth/2, this->armsColor); /* Smooth joint */
+    this->DrawRectangle(this->armLength, this->armWidth, this->armsColor);
     
-    glTranslatef(0, firstPaddleHeight, 0);  /* Move to second left arm joint */
+    glTranslatef(0, this->armLength, 0);  /* Move to second left arm joint */
     glRotatef(this->leftArmSecondJointAngle, 0, 0, 1);
-    this->DrawCircle(5, this->armsColor); /* Smooth joint */
-    this->DrawRectangle(secondPaddleHeight, paddleWidth, this->armsColor);
+    this->DrawCircle(this->armWidth/2, this->armsColor); /* Smooth joint */
+    this->DrawRectangle(this->foreArmLength, this->armWidth, this->armsColor);
     
-    glTranslatef(0, secondPaddleHeight, 0);  /* Move to second right arm tip */
+    glTranslatef(0, this->foreArmLength, 0);  /* Move to second right arm tip */
     glTranslatef(0, handRadius, 0);
     this->DrawHand();
     
@@ -110,15 +139,15 @@ void Character::DrawRightArms(GLfloat x, GLfloat y)
     
     glTranslatef(x, y, 0); /* Move to right arm base */
     glRotatef(this->rightArmFirstJointAngle, 0, 0, 1);
-    this->DrawCircle(5, this->armsColor); /* Smooth joint */
-    this->DrawRectangle(firstPaddleHeight, paddleWidth, this->armsColor);
+    this->DrawCircle(this->armWidth/2, this->armsColor); /* Smooth joint */
+    this->DrawRectangle(this->armLength, this->armWidth, this->armsColor);
     
-    glTranslatef(0, firstPaddleHeight, 0);  /* Move to second right arm joint */
+    glTranslatef(0, this->armLength, 0);  /* Move to second right arm joint */
     glRotatef(this->rightArmSecondJointAngle, 0, 0, 1);
-    this->DrawCircle(5, this->armsColor); /* Smooth joint */
-    this->DrawRectangle(secondPaddleHeight, paddleWidth, this->armsColor);
+    this->DrawCircle(this->armWidth/2, this->armsColor); /* Smooth joint */
+    this->DrawRectangle(this->foreArmLength, this->armWidth,  this->armsColor);
     
-    glTranslatef(0, secondPaddleHeight, 0);  /* Move to second right arm tip */
+    glTranslatef(0, this->foreArmLength, 0);  /* Move to second right arm tip */
     glTranslatef(0, handRadius, 0);
     this->DrawHand();
     
@@ -209,11 +238,8 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
 }
 
 void Character::MoveForward(Game* game, GLfloat dx) {
-    cout << "MoveFowardByBefore: " << dx << endl;
     dx = this->gameObject->applyTimeFix(dx);
     
-    
-    cout << "MoveFowardBy: " << dx << endl;
     Point2D* charPosition = new Point2D(0, 0);
     
     if(willColide(game, dx)) return;
@@ -235,11 +261,11 @@ bool Character::willColideWithOtherPlayer(Character* another, GLfloat dx) {
 }
 
 bool Character::willColideWithGameWalls(GLfloat dx) {
-    Rectangle rect = Rectangle(-this->gameObject->ViewingWidth/2, -this->gameObject->ViewingHeight/2, this->gameObject->ViewingWidth, this->gameObject->ViewingHeight);
+    Rectangle rect = Rectangle(this->gameObject->arena.x, this->gameObject->arena.y, this->gameObject->arena.width, this->gameObject->arena.height);
 
     Point2D* thisPoint = new Point2D(0, 0);
     moveForwardTransform(dx)->apply(thisPoint);
-    Circle circ = Circle(thisPoint->x, thisPoint->y, this->outsideRadius);
+    Circle circ = Circle(thisPoint->x, thisPoint->y, this->torsoRadius);
 
     bool isIntersecting = Collision::circleInsideRectIntersect(circ, rect);
     return isIntersecting;
@@ -268,4 +294,8 @@ void Character::followCharacter(Game* game, Character* other, GLfloat dx) {
     this->gTheta = deg + 90;
     
     this->MoveForward(game, dx/2);
+}
+
+void Character::setColor(Color _color) {
+    this->torsoColor = _color;
 }

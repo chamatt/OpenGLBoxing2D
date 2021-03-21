@@ -9,6 +9,10 @@ void initFramework() {
     srand (static_cast <unsigned> (time(0)));
 }
 
+void Circle::setColor(Color _color) {
+    this->color = _color;
+}
+
 void Transformation::log(){
     if(shouldLog) {
         cout << "Matrix:" << endl;
