@@ -43,6 +43,13 @@ void Transformation::logTranslate(GLfloat x, GLfloat y){
     }
 };
 
+void Transformation::logScale(GLfloat x, GLfloat y){
+    if(shouldLog){
+        cout << "Scale: " << x << ", " << y << endl;
+        this->log();
+    }
+};
+
 void Transformation::logRotate(GLfloat angle){
     if(shouldLog){
         cout << "Rotate: " << angle << endl;
@@ -83,6 +90,16 @@ void Transformation::translate2d(GLfloat x, GLfloat y){
     };
     matrixMultiply(translateMatrix);
     this->logTranslate(x, y);
+};
+
+void Transformation::scale2d(GLfloat Sx, GLfloat Sy){
+    vector< vector<GLfloat> > scaleMatrix = {
+        {Sx, 0,  0},
+        {0,  Sy, 0},
+        {0,  0,  1}
+    };
+    matrixMultiply(scaleMatrix);
+    this->logScale(Sx, Sy);
 };
 
 void Transformation::rotate2d(GLfloat angle){

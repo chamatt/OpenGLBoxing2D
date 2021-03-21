@@ -177,6 +177,8 @@ class Transformation {
         void log();
         
         void logTranslate(GLfloat x, GLfloat y);
+        
+        void logScale(GLfloat x, GLfloat y);
     
         void logRotate(GLfloat angle);
     
@@ -195,6 +197,8 @@ class Transformation {
         };
 
         void translate2d(GLfloat x, GLfloat y);
+    
+        void scale2d(GLfloat Sx, GLfloat Sy);
 
         void rotate2d(GLfloat angle);
 
