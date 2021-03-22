@@ -21,8 +21,6 @@ Character::Character(Game* game, GLfloat size){
     noseColor = Color(90, 128, 184);
     noseStroke = Color(64, 92, 134);
     armsColor = Color(161, 186, 102);
-//    handColor = Color(179, 87, 81);
-//    handStroke = Color(130, 61, 57);
     
     handColor = defaultColors.handColor;
     handStroke = defaultColors.handStroke;
@@ -246,9 +244,11 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
     this->DrawTorso();
     this->DrawNose();
     
-    this->DrawCircleDashed(outsideRadius, Color(255, 255, 255));
+    if(showOutsideRadius){
+        this->DrawCircleDashed(outsideRadius, Color(255, 255, 255));
+    }
     
-    this->DrawCircle(5, Color(255,255,0));
+//    this->DrawCircle(5, Color(255,255,0));
     glPopMatrix();
 }
 
@@ -325,6 +325,7 @@ bool Character::willColide(Game* game, GLfloat dx) {
 }
 
 void Character::hitDetection(Character* another) {
+    if(!characterIsEnabled) return;
     if(another == this) return;
     
     if(this->punchState == CharacterPunchState::LEFT_PUNCH) {
@@ -385,56 +386,44 @@ GLfloat Character::getRightMouseAngle(GLfloat xDistance) {
 }
 
 void Character::handlePlayerPunchControls() {
-    if(this->gameObject->player1 == this)
-    if(this->gameObject->mouse.leftButton.isPressed) {
-        GLfloat xDistance = this->gameObject->mouse.currentPosition.x - this->gameObject->mouse.leftButton.clickPosition.x;
-        
-        GLfloat finalAngle;
-        if(this->gameObject->mouse.currentPosition.x > this->gameObject->mouse.leftButton.clickPosition.x){
-            if(punchState == CharacterPunchState::LEFT_PUNCH) resetHitOpponent();
+    if(!characterIsEnabled) return;
+    if(this->gameObject->player1 == this){
+        if(this->gameObject->mouse.leftButton.isPressed) {
+            GLfloat xDistance = this->gameObject->mouse.currentPosition.x - this->gameObject->mouse.leftButton.clickPosition.x;
             
-            this->setPunchState(CharacterPunchState::RIGHT_PUNCH);
-            finalAngle = getRightMouseAngle(abs(xDistance));
-            this->RotateRightArmToAngle(finalAngle);
-            this->RotateLeftArmToAngle(120);
+            GLfloat finalAngle;
+            if(this->gameObject->mouse.currentPosition.x > this->gameObject->mouse.leftButton.clickPosition.x){
+                if(punchState == CharacterPunchState::LEFT_PUNCH) resetHitOpponent();
+                
+                this->setPunchState(CharacterPunchState::RIGHT_PUNCH);
+                finalAngle = getRightMouseAngle(abs(xDistance));
+                this->RotateRightArmToAngle(finalAngle);
+                this->RotateLeftArmToAngle(120);
+            }
+            else if(this->gameObject->mouse.currentPosition.x < this->gameObject->mouse.leftButton.clickPosition.x){
+                if(punchState == CharacterPunchState::RIGHT_PUNCH) resetHitOpponent();
+                
+                this->setPunchState(CharacterPunchState::LEFT_PUNCH);
+                finalAngle = getLeftMouseAngle(abs(xDistance));
+                this->RotateLeftArmToAngle(finalAngle);
+                this->RotateRightArmToAngle(-120);
+            }
+            else {
+                resetHitOpponent();
+                
+                this->RotateLeftArmToAngle(MIN_LEFT_ANGLE);
+                this->RotateRightArmToAngle(MIN_RIGHT_ANGLE);
+            }
+        } else {
+            this->setPunchState(CharacterPunchState::IDLE);
+            this->RotateRightArm(2);
+            this->RotateLeftArm(2);
         }
-        else if(this->gameObject->mouse.currentPosition.x < this->gameObject->mouse.leftButton.clickPosition.x){
-            if(punchState == CharacterPunchState::RIGHT_PUNCH) resetHitOpponent();
-            
-            this->setPunchState(CharacterPunchState::LEFT_PUNCH);
-            finalAngle = getLeftMouseAngle(abs(xDistance));
-            this->RotateLeftArmToAngle(finalAngle);
-            this->RotateRightArmToAngle(-120);
-        }
-        else {
-            resetHitOpponent();
-            
-            this->RotateLeftArmToAngle(MIN_LEFT_ANGLE);
-            this->RotateRightArmToAngle(MIN_RIGHT_ANGLE);
-        }
-    } else {
-        this->setPunchState(CharacterPunchState::IDLE);
-        this->RotateRightArm(2);
-        this->RotateLeftArm(2);
     }
 }
 
 void Character::Draw(){
     DrawCharacter(gX, gY);
-    
-    Point2D* point = new Point2D(0,0);
-    leftGloveTransform()->apply(point);
-    glPushMatrix();
-    glTranslatef(point->x, point->y, 0);
-    this->DrawCircle(10, Color(255,255,0));
-    glPopMatrix();
-    
-    Point2D* point2 = new Point2D(0,0);
-    rightGloveTransform()->apply(point2);
-    glPushMatrix();
-    glTranslatef(point2->x, point2->y, 0);
-    this->DrawCircle(10, Color(255,255,0));
-    glPopMatrix();
     
     hitDetection(this->gameObject->player1);
     hitDetection(this->gameObject->player2);

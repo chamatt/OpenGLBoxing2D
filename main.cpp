@@ -26,10 +26,15 @@ void renderScene(void)
      // Clear the screen.
      glClear(GL_COLOR_BUFFER_BIT);
  
-     game->player1->Draw();
-     game->player2->Draw();
+    if(game->gameIsOver){
+        game->DrawGameOver();
+    } else {
+        game->player1->Draw();
+        game->player2->Draw();
+       
+        game->PrintScore();
+    }
     
-     game->PrintScore();
 
      glutSwapBuffers(); // Desenha the new frame of the game->
 }
@@ -85,6 +90,7 @@ void frameCorrectionFix() {
 
 void idle(void)
 {
+    game->checkGameOver();
     game->frameCorrectionFix();
     double inc = INC_KEYIDLE;
     
@@ -108,38 +114,6 @@ void idle(void)
     {
         game->player1->MoveForward(-inc);
     }
-   
-    
-//    //Trata o tiro (soh permite um tiro por vez)
-//    //Poderia usar uma lista para tratar varios tiros
-//    if(tiro){
-//        tiro->Move(timeDiference/100);
-//
-//        //Trata colisao
-//        if (alvo.Atingido(tiro)){
-//            atingido++;
-//            alvo.Recria(rand()%500 - 250, 200);
-//        }
-//
-//        if (!tiro->Valido()){
-//            delete tiro;
-//            tiro = NULL;
-//        }
-//    }
-    
-    
-    
-//    //Control animation
-//    if (animate){
-//        static int dir = 1;
-//        if (robo.ObtemX() > (ViewingWidth/2)){
-//            dir *= -1;
-//        }
-//        else if (robo.ObtemX() < -(ViewingWidth/2)){
-//            dir *= -1;
-//        }
-//        robo.MoveEmX(moveByTime(dir*INC_KEYIDLE));
-//    }
     
     glutPostRedisplay();
 }
@@ -161,21 +135,13 @@ int main(int argc, char *argv[])
     
     game = new Game(argv[1]);
     
-//    game.initializeCharacters(20, 20);
-//    game.setPlayerStartPosition(game.player1, -150, -150, -45);
-//    game.setPlayerStartPosition(game.player2, 150, 150, 120);
-    
-    // Initialize openGL with Double buffer and RGB color without transparency.
-    // Its interesting to try GLUT_SINGLE instead of GLUT_DOUBLE.
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
  
-    // Create the window.
     glutInitWindowSize(game->arena.width, game->arena.height);
     glutInitWindowPosition(150,50);
     glutCreateWindow("Boxing 2D");
  
-    // Define callbacks.
     glutDisplayFunc(renderScene);
     
     glutKeyboardFunc(keyPress);

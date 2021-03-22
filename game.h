@@ -29,6 +29,8 @@ class Character;
 
 class Game {
 public:
+    string xmlPath;
+    
     //Key status
     int keyStatus[256];
 
@@ -38,6 +40,8 @@ public:
     
     Character* player1;
     Character* player2;
+    
+    int maxScore = 10;
     
     GLdouble currentTime, timeDiference;
 
@@ -52,8 +56,14 @@ public:
         previousTime = currentTime;
     }
     
+    bool gameIsOver = false;
+    void gameOver();
+    void checkGameOver();
+    
     Game();
     Game(string xmlPath);
+    
+    void resetGame();
     
     void initializeCharacters(GLfloat sizep1, GLfloat sizep2);
     
@@ -61,6 +71,8 @@ public:
     char str[1000];
     void * font = GLUT_BITMAP_9_BY_15;
     void PrintScore();
+    void Output(int x, int y, Color color, string str);
+    void DrawGameOver();
     
     
     void keyPress(unsigned char key, int x, int y);

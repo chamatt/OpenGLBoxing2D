@@ -25,6 +25,51 @@ void Game::PrintScore()
    }
 }
 
+void Game::Output(int x, int y, Color color, string str)
+{
+  glColor3f( color.R, color.G, color.B );
+  glRasterPos2f(x, y);
+  int len, i;
+  len = str.size();
+  for (i = 0; i < len; i++) {
+    glutBitmapCharacter(this->font, str[i]);
+  }
+}
+
+void Game::DrawGameOver()
+{
+    auto calcSize = [](string newStr) -> int { return (newStr.size() * 9)/2; };
+    
+    string winString = "You Win!";
+    string loseString = "You Lose!";
+    string tieString = "Draw!";
+    string restartString = "Press 'M' to restart the game";
+    
+    if(player1->hitScore > player2->hitScore)
+        Output(this->arena.x+this->arena.width/2 - calcSize(winString), this->arena.x+this->arena.height/2, Color(0,255,0), winString);
+    
+    if(player1->hitScore < player2->hitScore)
+        Output(this->arena.x+this->arena.width/2 - calcSize(loseString), this->arena.x+this->arena.height/2, Color(255,0,0), loseString);
+    
+    if(player1->hitScore == player2->hitScore)
+        Output(this->arena.x+this->arena.width/2 - calcSize(tieString), this->arena.x+this->arena.height/2, Color(0,0,255), tieString);
+    
+    Output(this->arena.x+this->arena.width/2 - calcSize(restartString), this->arena.x+this->arena.height/2 - 20, Color(255,255,255), restartString);
+//   GLfloat x = this->arena.x+20, y = this->arena.y+20;
+//   glColor3f(1.0, 1.0, 1.0);
+//   //Cria a string a ser impressa
+//   char *tmpStr;
+//   sprintf(this->str, "Player 1: %d X Player 2: %d", this->player1->hitScore, this->player2->hitScore);
+//   //Define a posicao onde vai comecar a imprimir
+//   glRasterPos2f(x, y);
+//   //Imprime um caractere por vez
+//   tmpStr = this->str;
+//   while( *tmpStr ){
+//       glutBitmapCharacter(this->font, *tmpStr);
+//       tmpStr++;
+//   }
+}
+
 void Game::keyPress(unsigned char key, int x, int y)
 {
     switch (key)
@@ -49,8 +94,28 @@ void Game::keyPress(unsigned char key, int x, int y)
         case 'P':
              player2->toggleCharacterEnabled();
              break;
+        case 'o':
+        case 'O':
+            player1->toggleOutsideRadius();
+            player2->toggleOutsideRadius();
+            break;
+        case 'm':
+        case 'M':
+            resetGame();
+            break;
+        case 'i':
+        case 'I':
+            this->maxScore = maxScore == 10 ? 50 : 10;
+            break;
         case 27 :
+            if(gameIsOver)
              exit(0);
+            else {
+                this->player1->hitScore = 0;
+                this->player2->hitScore = 0;
+                gameOver();
+            }
+        
     }
     glutPostRedisplay();
 }
@@ -61,6 +126,21 @@ void Game::setPlayerStartPosition(Character* pl, GLfloat x, GLfloat y, GLfloat a
 }
 
 Game::Game(string xmlPath) {
+    this->xmlPath = xmlPath;
+    GameInitObject initObject = XMLParser::parseArena(xmlPath);
+    
+    this->player1 = new Character(this, initObject.player1.headSize, initObject.player1.position,  initObject.player1.angle - 90);
+    this->player1->setColor(Color(90, 128, 184));
+    this->player1->setPlayerType(CharacterType::PLAYER);
+    this->player2 = new Character(this, initObject.player2.headSize, initObject.player2.position,  initObject.player2.angle - 90);
+    this->player2->setColor(Color(78, 173, 71));
+    this->player2->setPlayerType(CharacterType::ENEMY);
+
+    this->arena = initObject.arena;
+}
+
+void Game::resetGame() {
+    gameIsOver = false;
     GameInitObject initObject = XMLParser::parseArena(xmlPath);
     
     this->player1 = new Character(this, initObject.player1.headSize, initObject.player1.position,  initObject.player1.angle - 90);
@@ -75,4 +155,16 @@ Game::Game(string xmlPath) {
 
 Game::Game() {
     this->arena = Rectangle(0,0,0,0);
+}
+
+void Game::gameOver() {
+    this->player1->characterIsEnabled = false;
+    this->player2->characterIsEnabled = false;
+    gameIsOver = true;
+}
+
+void Game::checkGameOver() {
+    if(this->player1->hitScore >= this->maxScore || this->player2->hitScore >= this->maxScore) {
+        gameOver();
+    }
 }

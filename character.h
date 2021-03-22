@@ -196,10 +196,13 @@ public:
     
     int hitScore = 0;
     
-    
     bool characterIsEnabled = true;
     void toggleCharacterEnabled() {
        this->characterIsEnabled = !characterIsEnabled;
+    }
+    bool showOutsideRadius = false;
+    void toggleOutsideRadius() {
+       this->showOutsideRadius = !showOutsideRadius;
     }
     
     Character(Game* game, GLfloat size);
