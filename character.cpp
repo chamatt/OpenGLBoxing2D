@@ -21,8 +21,11 @@ Character::Character(Game* game, GLfloat size){
     noseColor = Color(90, 128, 184);
     noseStroke = Color(64, 92, 134);
     armsColor = Color(161, 186, 102);
-    handColor = Color(179, 87, 81);
-    handStroke = Color(130, 61, 57);
+//    handColor = Color(179, 87, 81);
+//    handStroke = Color(130, 61, 57);
+    
+    handColor = defaultColors.handColor;
+    handStroke = defaultColors.handStroke;
     
     this->torsoRadius = size;
     this->handRadius = (3.0/4.0) * size;
@@ -245,15 +248,16 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
     glPopMatrix();
 }
 
-void Character::MoveForward(Game* game, GLfloat dx)
+void Character::MoveForward(GLfloat dx, bool applyFix)
 {
-    dx = this->gameObject->applyTimeFix(dx);
+    if(applyFix)
+        dx = this->gameObject->applyTimeFix(dx);
     
     Point2D* charPosition = new Point2D(0, 0);
     
-    
     this->nextNPCState(CharacterPunchSignal::NONE);
-    if(willColide(game, dx)) return;
+    
+    if(willColide(gameObject, dx)) return;
     
     moveForwardTransform(dx)->apply(charPosition);
     
@@ -316,6 +320,36 @@ bool Character::willColide(Game* game, GLfloat dx) {
     return false;
 }
 
+void Character::hitDetection(Character* another) {
+    if(another == this) return;
+    
+    if(this->punchState == CharacterPunchState::LEFT_PUNCH) {
+        Point2D* thisPoint = new Point2D(0, 0);
+        leftGloveTransform()->apply(thisPoint);
+    
+        Circle thisCircle = Circle(thisPoint->x, thisPoint->y, this->handRadius);
+        Circle anotherCircle = Circle(another->gX, another->gY, this->torsoRadius);
+        
+        bool didCollide = Collision::circleCircleIntersect(thisCircle, anotherCircle);
+        if(didCollide && countPoint){
+            handleHitOpponent(another);
+        }
+        
+    } else if(this->punchState == CharacterPunchState::RIGHT_PUNCH) {
+        Point2D* thisPoint = new Point2D(0, 0);
+        rightGloveTransform()->apply(thisPoint);
+    
+        Circle thisCircle = Circle(thisPoint->x, thisPoint->y, this->handRadius);
+        Circle anotherCircle = Circle(another->gX, another->gY, another->torsoRadius);
+        
+        bool didCollide = Collision::circleCircleIntersect(thisCircle, anotherCircle);
+        if(didCollide && countPoint){
+            handleHitOpponent(another);
+        }
+    }
+}
+
+
 void Character::RotateBody(GLfloat inc) {
     inc = this->gameObject->applyTimeFix(inc);
     this->gTheta -= inc;
@@ -329,7 +363,7 @@ void Character::followCharacter(Game* game, Character* other, GLfloat dx) {
     
     this->gTheta = deg + 90;
     
-    this->MoveForward(game, dx/2);
+    this->MoveForward(dx/2);
 }
 
 void Character::setColor(Color _color) {
@@ -337,9 +371,7 @@ void Character::setColor(Color _color) {
 }
 
 GLfloat Character::getLeftMouseAngle(GLfloat xDistance) {
-    cout << xDistance << "," << 0 << "," << (float)this->gameObject->arena.width/2 << "," << MIN_LEFT_ANGLE << "," << MAX_LEFT_ANGLE << endl;
     GLfloat mappedValue = Util::map(xDistance, 0, (float)this->gameObject->arena.width/2, MIN_LEFT_ANGLE, MAX_LEFT_ANGLE);
-    cout<< "mapped: "<<mappedValue << ","<< Util::clamp(mappedValue, MIN_LEFT_ANGLE, MAX_LEFT_ANGLE)<< endl;
     return Util::clamp(mappedValue, MAX_LEFT_ANGLE, MIN_LEFT_ANGLE);
 }
 GLfloat Character::getRightMouseAngle(GLfloat xDistance) {
@@ -348,34 +380,59 @@ GLfloat Character::getRightMouseAngle(GLfloat xDistance) {
 }
 
 void Character::handlePlayerPunchControls() {
+    if(this->gameObject->player1 == this)
     if(this->gameObject->mouse.leftButton.isPressed) {
         GLfloat xDistance = this->gameObject->mouse.currentPosition.x - this->gameObject->mouse.leftButton.clickPosition.x;
         
-        cout << "xDisntance: " << xDistance << endl;
         GLfloat finalAngle;
         if(this->gameObject->mouse.currentPosition.x > this->gameObject->mouse.leftButton.clickPosition.x){
-            this->punchState = CharacterPunchState::RIGHT_PUNCH;
-            finalAngle = getRightMouseAngle(abs(xDistance));
+            if(punchState == CharacterPunchState::LEFT_PUNCH) resetHitOpponent();
             
-            cout << "Angle: " << finalAngle << endl;
+            this->setPunchState(CharacterPunchState::RIGHT_PUNCH);
+            finalAngle = getRightMouseAngle(abs(xDistance));
             this->RotateRightArmToAngle(finalAngle);
             this->RotateLeftArmToAngle(120);
         }
         else if(this->gameObject->mouse.currentPosition.x < this->gameObject->mouse.leftButton.clickPosition.x){
-            this->punchState = CharacterPunchState::LEFT_PUNCH;
-            finalAngle = getLeftMouseAngle(abs(xDistance));
+            if(punchState == CharacterPunchState::RIGHT_PUNCH) resetHitOpponent();
             
-            cout << "Angle: " << finalAngle << endl;
+            this->setPunchState(CharacterPunchState::LEFT_PUNCH);
+            finalAngle = getLeftMouseAngle(abs(xDistance));
             this->RotateLeftArmToAngle(finalAngle);
             this->RotateRightArmToAngle(-120);
         }
         else {
+            resetHitOpponent();
+            
             this->RotateLeftArmToAngle(MIN_LEFT_ANGLE);
             this->RotateRightArmToAngle(MIN_RIGHT_ANGLE);
         }
     } else {
-        this->punchState = CharacterPunchState::IDLE;
+        this->setPunchState(CharacterPunchState::IDLE);
         this->RotateRightArm(2);
         this->RotateLeftArm(2);
     }
 }
+
+void Character::Draw(){
+    DrawCharacter(gX, gY);
+    
+    Point2D* point = new Point2D(0,0);
+    leftGloveTransform()->apply(point);
+    glPushMatrix();
+    glTranslatef(point->x, point->y, 0);
+    this->DrawCircle(10, Color(255,255,0));
+    glPopMatrix();
+    
+    Point2D* point2 = new Point2D(0,0);
+    rightGloveTransform()->apply(point2);
+    glPushMatrix();
+    glTranslatef(point2->x, point2->y, 0);
+    this->DrawCircle(10, Color(255,255,0));
+    glPopMatrix();
+    
+    hitDetection(this->gameObject->player1);
+    hitDetection(this->gameObject->player2);
+    
+    handlePunchControls();
+};

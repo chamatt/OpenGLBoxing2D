@@ -102,11 +102,11 @@ void idle(void)
     
     if(game->isKeyPressed('w'))
     {
-        game->player1->MoveForward(game, inc);
+        game->player1->MoveForward(inc);
     }
     if(game->isKeyPressed('s'))
     {
-        game->player1->MoveForward(game, -inc);
+        game->player1->MoveForward(-inc);
     }
     
    

@@ -8,6 +8,23 @@ void Game::initializeCharacters(GLfloat sizep1, GLfloat sizep2){
     this->player2 = new Character(this, 20);
 }
 
+void Game::PrintScore()
+{
+   GLfloat x = this->arena.x+20, y = this->arena.y+20;
+   glColor3f(1.0, 1.0, 1.0);
+   //Cria a string a ser impressa
+   char *tmpStr;
+   sprintf(this->str, "Player 1: %d X Player 2: %d", this->player1->hitScore, this->player2->hitScore);
+   //Define a posicao onde vai comecar a imprimir
+   glRasterPos2f(x, y);
+   //Imprime um caractere por vez
+   tmpStr = this->str;
+   while( *tmpStr ){
+       glutBitmapCharacter(this->font, *tmpStr);
+       tmpStr++;
+   }
+}
+
 void Game::keyPress(unsigned char key, int x, int y)
 {
     switch (key)

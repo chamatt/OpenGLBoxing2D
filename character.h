@@ -26,9 +26,28 @@
 #define MIN_RIGHT_ANGLE -120
 #define MAX_RIGHT_ANGLE -25
 
+#define BACKWARD_HIT_MOVE -10
+
 using namespace std;
 
 class Game;
+
+class DefaultColors {
+public:
+    DefaultColors(){}
+    // Nose
+    Color noseColor = Color(90, 128, 184);
+    Color noseStroke = Color(64, 92, 134);
+    
+    // Arms
+    Color armsColor = Color(161, 186, 102);
+    
+    // Hand
+    Color handColor = Color(179, 87, 81);
+    Color handStroke = Color(130, 61, 57);
+    Color hitHandColor = Color(255, 0, 255);
+    Color hitHandStroke = Color(255, 10, 255);
+};
 
 enum CharacterType {
     PLAYER,
@@ -56,6 +75,9 @@ enum CharacterPunchSignal {
 class Character {
     Game* gameObject;
     
+    
+    DefaultColors defaultColors;
+    
     Color torsoColor;
     Color torsoStroke;
     Color noseColor;
@@ -81,6 +103,39 @@ class Character {
     CharacterType charType = CharacterType::PLAYER;
     CharacterState charState = CharacterState::PASSIVE;
     CharacterPunchState punchState = CharacterPunchState::IDLE;
+    
+    int countPoint = true;
+    
+    void setPunchState(CharacterPunchState state) {
+        switch(state) {
+            case CharacterPunchState::IDLE:
+//                this->countPoint = true;
+                resetHitOpponent();
+                this->punchState = state;
+                break;
+            default:
+                this->punchState = state;
+                break;
+        }
+    }
+    void hitDetection(Character* another);
+    
+    void handleHitOpponent(Character* another) {
+        if(countPoint){
+            this->countPoint = false;
+            this->handColor = defaultColors.hitHandColor;
+            this->handStroke = defaultColors.hitHandStroke;
+            this->hitScore++;
+            
+            another->MoveForward(BACKWARD_HIT_MOVE);
+        }
+    }
+    
+    void resetHitOpponent() {
+        this->countPoint = true;
+        this->handColor = defaultColors.handColor;
+        this->handStroke = defaultColors.handStroke;
+    }
 
 private:
     void DrawRectangle(GLint height, GLint width, Color color);
@@ -104,13 +159,44 @@ private:
         tr->translate2d(0, dx);
         return tr;
     }
+    
+    Transformation* rightGloveTransform() {
+        Transformation* tr = new Transformation();
+        
+        tr->translate2d(gX, gY);
+        tr->rotate2d(gTheta);
+        tr->translate2d(this->torsoRadius, 0);
+        tr->rotate2d(this->rightArmFirstJointAngle);
+        tr->translate2d(0, this->armLength);  /* Move to second left arm joint */
+        tr->rotate2d(this->rightArmSecondJointAngle);
+        tr->translate2d(0, this->foreArmLength);  /* Move to second left arm joint */
+        tr->translate2d(0, handRadius);  /* Move to second left arm joint */
+        
+        return tr;
+    }
+    
+    Transformation* leftGloveTransform() {
+        Transformation* tr = new Transformation();
+        
+        tr->translate2d(gX, gY);
+        tr->rotate2d(gTheta);
+        tr->translate2d(-this->torsoRadius, 0);
+        tr->rotate2d(this->leftArmFirstJointAngle);
+        tr->translate2d(0, this->armLength);  /* Move to second left arm joint */
+        tr->rotate2d(this->leftArmSecondJointAngle);
+        tr->translate2d(0, this->foreArmLength);  /* Move to second left arm joint */
+        tr->translate2d(0, handRadius);  /* Move to second left arm joint */
+        
+        return tr;
+    }
 
 public:
     
     GLfloat gX;
     GLfloat gY;
     GLfloat gTheta;
-    GLfloat direction;
+    
+    int hitScore = 0;
     
     Character(Game* game, GLfloat size);
     Character(Game* game, GLfloat size, Point2D position, GLfloat angle);
@@ -128,6 +214,8 @@ public:
     void AnotherCharacterIsWithinRadius(Character* another, GLfloat dx);
     
     bool willColide(Game* game, GLfloat dx);
+    
+    bool hitDetection(Game* game, GLfloat dx);
     
     void handlePunchControls() {
         switch(charType){
@@ -159,16 +247,8 @@ public:
     GLfloat getLeftMouseAngle(GLfloat xDistance);
     GLfloat getRightMouseAngle(GLfloat xDistance);
     
-    void handlePlayerPunchState() {
-        
-    }
-    
     void handlePlayerPunchControls();
-    void Draw(){
-        DrawCharacter(gX, gY);
-        
-        handlePunchControls();
-    };
+    void Draw();
     bool RotateLeftArm(GLfloat inc, bool applyFix = false);
     bool RotateRightArm(GLfloat inc, bool applyFix = false);
     
@@ -176,7 +256,7 @@ public:
     void RotateRightArmToAngle(GLfloat angle);
     
     void RotateBody(GLfloat inc);
-    void MoveForward(Game* game, GLfloat dx);
+    void MoveForward(GLfloat dx, bool applyFix = true);
     
     void followCharacter(Game* game, Character* other, GLfloat dx);
     
@@ -201,27 +281,28 @@ public:
         if(punchState == IDLE) {
             if(charState == CharacterState::AGGRESSIVE) {
                 GLint random = (int)Random(2).number;
-                punchState = random == 0 ? CharacterPunchState::LEFT_PUNCH : CharacterPunchState::RIGHT_PUNCH;
+                
+                if(random == 0) this->setPunchState(CharacterPunchState::LEFT_PUNCH);
+                else this->setPunchState(CharacterPunchState::RIGHT_PUNCH);
             }
         }
         else if(punchState == LEFT_PUNCH) {
             if(signal == CharacterPunchSignal::MAX_REACHED) {
-                punchState = CharacterPunchState::RETURN_LEFT_PUNCH;
+                this->setPunchState(CharacterPunchState::RETURN_LEFT_PUNCH);
             }
         }
         else if(punchState == RETURN_LEFT_PUNCH) {
             if(signal == CharacterPunchSignal::MIN_REACHED) {
-                punchState = CharacterPunchState::IDLE;
+                this->setPunchState(CharacterPunchState::IDLE);
             }
         }
         else if(punchState == RIGHT_PUNCH) {
-            if(signal == CharacterPunchSignal::MAX_REACHED) {
-                punchState = CharacterPunchState::RETURN_RIGHT_PUNCH;
+            if(signal == CharacterPunchSignal::MAX_REACHED) {                this->setPunchState(CharacterPunchState::RETURN_RIGHT_PUNCH);
             }
         }
         else if(punchState == RETURN_RIGHT_PUNCH) {
             if(signal == CharacterPunchSignal::MIN_REACHED) {
-                punchState = CharacterPunchState::IDLE;
+                this->setPunchState(CharacterPunchState::IDLE);
             }
         }
     }

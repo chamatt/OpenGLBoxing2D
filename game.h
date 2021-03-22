@@ -60,22 +60,7 @@ public:
     int score = 0;
     char str[1000];
     void * font = GLUT_BITMAP_9_BY_15;
-    void PrintScore()
-    {
-       GLfloat x = this->arena.x+20, y = this->arena.y+20;
-       glColor3f(1.0, 1.0, 1.0);
-       //Cria a string a ser impressa
-       char *tmpStr;
-       sprintf(this->str, "Score: %d", score);
-       //Define a posicao onde vai comecar a imprimir
-       glRasterPos2f(x, y);
-       //Imprime um caractere por vez
-       tmpStr = this->str;
-       while( *tmpStr ){
-           glutBitmapCharacter(this->font, *tmpStr);
-           tmpStr++;
-       }
-    }
+    void PrintScore();
     
     
     void keyPress(unsigned char key, int x, int y);
