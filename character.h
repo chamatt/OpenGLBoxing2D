@@ -21,10 +21,12 @@
 #define baseWidth 100
 #define radiusWheel 30
 
-#define MIN_LEFT_ANGLE 120
+#define MIN_LEFT_ANGLE 140
 #define MAX_LEFT_ANGLE 25
-#define MIN_RIGHT_ANGLE -120
+#define MIN_RIGHT_ANGLE -140
 #define MAX_RIGHT_ANGLE -25
+
+#define MIN_ANGLE 140
 
 #define BACKWARD_HIT_MOVE -10
 
@@ -102,10 +104,10 @@ class Character {
     GLfloat noseRadius;
     GLfloat outsideRadius;
     
-    GLfloat leftArmFirstJointAngle = 120;
-    GLfloat leftArmSecondJointAngle = -120;
-    GLfloat rightArmFirstJointAngle = -120;
-    GLfloat rightArmSecondJointAngle = 120;
+    GLfloat leftArmFirstJointAngle = MIN_ANGLE;
+    GLfloat leftArmSecondJointAngle = -MIN_ANGLE;
+    GLfloat rightArmFirstJointAngle = -MIN_ANGLE;
+    GLfloat rightArmSecondJointAngle = MIN_ANGLE;
     
     CharacterType charType = CharacterType::PLAYER;
     CharacterState charState = CharacterState::PASSIVE;

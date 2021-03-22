@@ -162,7 +162,7 @@ bool Character::RotateLeftArm(GLfloat inc, bool applyFix)
     }
     
     this->leftArmFirstJointAngle += inc;
-    this->leftArmSecondJointAngle -= inc*0.65;
+    this->leftArmSecondJointAngle -= inc*0.80;
     return true;
 }
 
@@ -183,19 +183,19 @@ bool Character::RotateRightArm(GLfloat inc, bool applyFix)
     }
     
     this->rightArmFirstJointAngle -= inc;
-    this->rightArmSecondJointAngle += inc*0.65;
+    this->rightArmSecondJointAngle += inc*0.80;
     return true;
 }
 
 void Character::RotateLeftArmToAngle(GLfloat angle)
 {
     this->leftArmFirstJointAngle = angle;
-    this->leftArmSecondJointAngle = -120 - (angle - 120)*0.65;
+    this->leftArmSecondJointAngle = -MIN_ANGLE - (angle - MIN_ANGLE)*0.80;
 }
 void Character::RotateRightArmToAngle(GLfloat angle)
 {
     this->rightArmFirstJointAngle = angle;
-    this->rightArmSecondJointAngle = 120 - (angle+120)*0.65;
+    this->rightArmSecondJointAngle = MIN_ANGLE - (angle+MIN_ANGLE)*0.80;
 }
 
 void Character::DrawHand()
@@ -387,7 +387,7 @@ void Character::handlePlayerPunchControls() {
                 this->setPunchState(CharacterPunchState::RIGHT_PUNCH);
                 finalAngle = getRightMouseAngle(abs(xDistance));
                 this->RotateRightArmToAngle(finalAngle);
-                this->RotateLeftArmToAngle(120);
+                this->RotateLeftArmToAngle(MIN_ANGLE);
             }
             else if(this->gameObject->mouse.currentPosition.x < this->gameObject->mouse.leftButton.clickPosition.x){
                 if(punchState == CharacterPunchState::RIGHT_PUNCH) resetHitOpponent();
@@ -395,7 +395,7 @@ void Character::handlePlayerPunchControls() {
                 this->setPunchState(CharacterPunchState::LEFT_PUNCH);
                 finalAngle = getLeftMouseAngle(abs(xDistance));
                 this->RotateLeftArmToAngle(finalAngle);
-                this->RotateRightArmToAngle(-120);
+                this->RotateRightArmToAngle(-MIN_ANGLE);
             }
             else {
                 resetHitOpponent();

@@ -14,7 +14,7 @@ void Game::PrintScore()
    glColor3f(1.0, 1.0, 1.0);
    //Cria a string a ser impressa
    char *tmpStr;
-   sprintf(this->str, "Player 1: %d X Player 2: %d", this->player1->hitScore, this->player2->hitScore);
+   sprintf(this->str, "Player: %d vs Enemy: %d", this->player1->hitScore, this->player2->hitScore);
    //Define a posicao onde vai comecar a imprimir
    glRasterPos2f(x, y);
    //Imprime um caractere por vez
