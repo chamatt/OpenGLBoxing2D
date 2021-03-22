@@ -1,10 +1,10 @@
-APP = olupxtest
+APP = trabalhocg
 
 SRCS = $(wildcard *.cpp)
 OBJS = $(SRCS:.cpp=.o)
  
 # Name of the project
-PROJ_NAME=robo
+PROJ_NAME=trabalhocg
  
 # .c files
 C_SOURCE=$(wildcard *.cpp)
@@ -22,7 +22,7 @@ LIBS=-framework GLUT	\
 	 -framework OpenGL	\
 	 -Wno-deprecated    \
 	 -lc++				\
-	 -std=c++11 -v
+	 -std=c++11
  
 #
 # Compilation and linking
