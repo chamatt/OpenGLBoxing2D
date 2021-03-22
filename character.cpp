@@ -158,14 +158,12 @@ bool Character::RotateLeftArm(GLfloat inc)
 {
     inc = this->gameObject->applyTimeFix(inc);
     
-    if(inc < 0) this->isLeftPunching = true;
-    
     if(this->leftArmFirstJointAngle >= 120 && inc > 0) {
-        this->isLeftPunching = false;
+        this->nextNPCState(CharacterPunchSignal::MIN_REACHED);
         return false;
     }
     else if(this->leftArmFirstJointAngle <= 45 && inc < 0) {
-        this->isLeftPunching = false;
+        this->nextNPCState(CharacterPunchSignal::MAX_REACHED);
         return false;
     }
     
@@ -178,20 +176,17 @@ bool Character::RotateRightArm(GLfloat inc)
 {
     inc = this->gameObject->applyTimeFix(inc);
     
-    if(inc < 0) this->isRightPunching = true;
-    
     if(this->rightArmFirstJointAngle <= -120 && inc > 0) {
-        this->isRightPunching = false;
+        this->nextNPCState(CharacterPunchSignal::MIN_REACHED);
         return false;
     }
     else if(this->rightArmFirstJointAngle >= -45 && inc < 0) {
-        this->isRightPunching = false;
+        this->nextNPCState(CharacterPunchSignal::MAX_REACHED);
         return false;
     }
     
     this->rightArmFirstJointAngle -= inc;
     this->rightArmSecondJointAngle += inc/1.7;
-    this->isRightPunching = false;
     return true;
 }
 
@@ -242,6 +237,8 @@ void Character::MoveForward(Game* game, GLfloat dx) {
     
     Point2D* charPosition = new Point2D(0, 0);
     
+    
+    this->nextNPCState(CharacterPunchSignal::NONE);
     if(willColide(game, dx)) return;
     
     moveForwardTransform(dx)->apply(charPosition);
@@ -257,7 +254,24 @@ bool Character::willColideWithOtherPlayer(Character* another, GLfloat dx) {
     
     Circle thisCircle = Circle(thisPoint->x, thisPoint->y, this->torsoRadius);
     Circle anotherCircle = Circle(another->gX, another->gY, this->outsideRadius);
+    
     return Collision::circleCircleIntersect(thisCircle, anotherCircle);
+}
+
+void Character::AnotherCharacterIsWithinRadius(Character* another, GLfloat dx) {
+    if(another == this) return;
+    Point2D* thisPoint = new Point2D(0, 0);
+    moveForwardTransform(dx)->apply(thisPoint);
+    
+    Circle thisCircle = Circle(thisPoint->x, thisPoint->y, this->outsideRadius);
+    Circle anotherCircle = Circle(another->gX, another->gY, another->outsideRadius);
+    
+    bool colliding = Collision::circleCircleIntersect(thisCircle, anotherCircle);
+    if(colliding){
+        this->charState = CharacterState::AGGRESSIVE;
+    } else {
+        this->charState = CharacterState::PASSIVE;
+    }
 }
 
 bool Character::willColideWithGameWalls(GLfloat dx) {
@@ -274,9 +288,15 @@ bool Character::willColideWithGameWalls(GLfloat dx) {
 
 bool Character::willColide(Game* game, GLfloat dx) {
     dx = this->gameObject->applyTimeFix(dx);
+    
+    // Test aggresiveness
+    AnotherCharacterIsWithinRadius(game->player1, dx);
+    AnotherCharacterIsWithinRadius(game->player2, dx);
+    
     if(willColideWithOtherPlayer(game->player1, dx)) return true;
     if(willColideWithOtherPlayer(game->player2, dx)) return true;
     if(willColideWithGameWalls(dx)) return true;
+    
     return false;
 }
 

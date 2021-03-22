@@ -66,7 +66,7 @@ class Point2D {
         }
         
         Point2D operator-(Point2D other) {
-            cout << this->toString() << " - " << other.toString() << "=" << Point2D(this->x - other.x, this->y - other.y).toString() << endl;
+//            cout << this->toString() << " - " << other.toString() << "=" << Point2D(this->x - other.x, this->y - other.y).toString() << endl;
             
             return Point2D(this->x - other.x, this->y - other.y);
         }

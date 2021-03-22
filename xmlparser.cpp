@@ -49,47 +49,19 @@ GameInitObject XMLParser::parseArena(string xmlPath) {
     PlayerObject* player1;
     PlayerObject* player2;
     
-    
-//    auto transformYCoordinates = [=](Point2D point) -> Transformation
-//    {
-//        Transformation tr = Transformation();
-//        tr.logMode(true);
-////        GLfloat w = arena.y + arena.height;
-////        GLfloat x = point.y;
-////        GLfloat y = arena.y;
-////
-//        GLfloat ypos = 2*arena.y + arena.height - point.y;
-////        GLfloat ypos = (w - x) + y;
-//        tr.translate2d(point.x, ypos);
-//        return tr;
-//    };
-    
     auto changeYCoordinates = [=](Point2D &point) -> void
     {
         GLfloat ypos = 2*arena.y + arena.height - point.y;
         point.y = ypos;
     };
     
-//    Point2D firstPoint = Point2D(0,0);
-//    transformYCoordinates(Point2D(firstCircle.x, firstCircle.y)).apply(&firstPoint);
-    
     Point2D firstPoint = Point2D(firstCircle.x, firstCircle.y);
     changeYCoordinates(firstPoint);
-    
-//    Point2D secondPoint = Point2D(0,0);
-//    transformYCoordinates(Point2D(secondCircle.x, secondCircle.y)).apply(&secondPoint);
-    
     Point2D secondPoint = Point2D(secondCircle.x, secondCircle.y);
     changeYCoordinates(secondPoint);
     
-    
-    cout << firstPoint.toString() << endl;
-    cout << secondPoint.toString() << endl;
-    
     GLfloat anglep1 = (Point2D(secondPoint.x, secondPoint.y) - Point2D(firstPoint.x, firstPoint.y)).getAngle();
     GLfloat anglep2 = (Point2D(firstPoint.x, firstPoint.y) - Point2D(secondPoint.x, secondPoint.y)).getAngle();
-    
-    
     
     if(firstCircle.color.colorString == "green") {
         player1 = new PlayerObject(firstCircle.radius, Point2D(firstPoint.x, firstPoint.y), anglep1);
@@ -99,9 +71,9 @@ GameInitObject XMLParser::parseArena(string xmlPath) {
         player1 = new PlayerObject(secondCircle.radius, Point2D(secondPoint.x,  secondPoint.y), anglep2);
     }
     
-    cout << firstCircle.toString() << endl;
-    cout << secondCircle.toString() << endl;
-    cout << arena.toString() << endl;
+//    cout << firstCircle.toString() << endl;
+//    cout << secondCircle.toString() << endl;
+//    cout << arena.toString() << endl;
     
     return GameInitObject(arena, *player1, *player2);
 }

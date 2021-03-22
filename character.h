@@ -22,6 +22,29 @@
 
 class Game;
 
+enum CharacterType {
+    PLAYER,
+    ENEMY
+};
+
+enum CharacterState {
+    PASSIVE,
+    AGGRESSIVE
+};
+
+enum CharacterPunchState {
+    IDLE,
+    LEFT_PUNCH,
+    RETURN_LEFT_PUNCH,
+    RIGHT_PUNCH,
+    RETURN_RIGHT_PUNCH
+};
+enum CharacterPunchSignal {
+    NONE,
+    MAX_REACHED,
+    MIN_REACHED
+};
+
 class Character {
     Game* gameObject;
     
@@ -47,9 +70,9 @@ class Character {
     GLfloat rightArmFirstJointAngle = -120;
     GLfloat rightArmSecondJointAngle = 120;
     
-    bool isLeftPunching = false;
-    bool isRightPunching = false;
-    
+    CharacterType charType = CharacterType::PLAYER;
+    CharacterState charState = CharacterState::PASSIVE;
+    CharacterPunchState punchState = CharacterPunchState::IDLE;
     
 private:
     void DrawRectangle(GLint height, GLint width, Color color);
@@ -94,11 +117,24 @@ public:
     
     bool willColideWithOtherPlayer(Character* another, GLfloat dx);
     
+    void AnotherCharacterIsWithinRadius(Character* another, GLfloat dx);
+    
     bool willColide(Game* game, GLfloat dx);
     
     void Draw(){
-        if(!isLeftPunching) this->RotateLeftArm(1);
-        if(!isRightPunching) this->RotateLeftArm(1);
+        if(punchState == CharacterPunchState::LEFT_PUNCH) {
+            this->RotateLeftArm(-2);
+        }
+        if(punchState == CharacterPunchState::RETURN_LEFT_PUNCH) {
+            this->RotateLeftArm(2);
+        }
+        if(punchState == CharacterPunchState::RIGHT_PUNCH) {
+            this->RotateRightArm(-2);
+        }
+        if(punchState == CharacterPunchState::RETURN_RIGHT_PUNCH) {
+            this->RotateRightArm(2);
+        }
+        
         DrawCharacter(gX, gY);
     };
     bool RotateLeftArm(GLfloat inc);
@@ -107,6 +143,10 @@ public:
     void MoveForward(Game* game, GLfloat dx);
     
     void followCharacter(Game* game, Character* other, GLfloat dx);
+    
+    void setPlayerType(CharacterType type) {
+        this->charType = type;
+    }
     
     GLfloat GetX(){
         return gX;
@@ -118,6 +158,37 @@ public:
     Color color;
     
     void setColor(Color _color);
+    
+    void nextNPCState(CharacterPunchSignal signal = CharacterPunchSignal::NONE) {
+        if(charType != CharacterType::ENEMY) return;
+        
+        if(punchState == IDLE) {
+            if(charState == CharacterState::AGGRESSIVE) {
+                GLint random = (int)Random(2).number;
+                punchState = random == 0 ? CharacterPunchState::LEFT_PUNCH : CharacterPunchState::RIGHT_PUNCH;
+            }
+        }
+        else if(punchState == LEFT_PUNCH) {
+            if(signal == CharacterPunchSignal::MAX_REACHED) {
+                punchState = CharacterPunchState::RETURN_LEFT_PUNCH;
+            }
+        }
+        else if(punchState == RETURN_LEFT_PUNCH) {
+            if(signal == CharacterPunchSignal::MIN_REACHED) {
+                punchState = CharacterPunchState::IDLE;
+            }
+        }
+        else if(punchState == RIGHT_PUNCH) {
+            if(signal == CharacterPunchSignal::MAX_REACHED) {
+                punchState = CharacterPunchState::RETURN_RIGHT_PUNCH;
+            }
+        }
+        else if(punchState == RETURN_RIGHT_PUNCH) {
+            if(signal == CharacterPunchSignal::MIN_REACHED) {
+                punchState = CharacterPunchState::IDLE;
+            }
+        }
+    }
 };
 
 #endif /* character_hpp */

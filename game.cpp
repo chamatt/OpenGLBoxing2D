@@ -62,13 +62,13 @@ void Game::setPlayerStartPosition(Character* pl, GLfloat x, GLfloat y, GLfloat a
 
 Game::Game(string xmlPath) {
     GameInitObject initObject = XMLParser::parseArena(xmlPath);
-
-    cout<<"aaaaaaaa: "<<initObject.player1.angle<< ","<<initObject.player2.angle<<endl;
     
     this->player1 = new Character(this, initObject.player1.headSize, initObject.player1.position,  initObject.player1.angle - 90);
     this->player1->setColor(Color(90, 128, 184));
+    this->player1->setPlayerType(CharacterType::PLAYER);
     this->player2 = new Character(this, initObject.player2.headSize, initObject.player2.position,  initObject.player2.angle - 90);
     this->player2->setColor(Color(78, 173, 71));
+    this->player2->setPlayerType(CharacterType::ENEMY);
 
     this->arena = initObject.arena;
 }
