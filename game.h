@@ -18,6 +18,7 @@
 #include "character.h"
 #include "framework.h"
 #include "game-config.h"
+#include "mouse.h"
 
 #define INC_KEY 13
 #define INC_KEYIDLE 2
@@ -31,13 +32,7 @@ public:
     //Key status
     int keyStatus[256];
 
-    // Window dimensions
-    GLint Width = 700;
-    GLint Height = 700;
-
-    // Viewing dimensions
-    GLint ViewingWidth = 500;
-    GLint ViewingHeight = 500;
+    Mouse mouse;
     
     Rectangle arena = Rectangle(0,0,0,0);
     
@@ -90,6 +85,33 @@ public:
     }
     
     void setPlayerStartPosition(Character* pl, GLfloat x, GLfloat y, GLfloat angle);
+    
+    void mouseEvent(int button, int state, int x, int y)
+    {
+            y = 2*arena.y + arena.height - y;
+            if (button == GLUT_LEFT_BUTTON)
+            {
+               if (state == GLUT_UP)
+               {
+                  mouse.leftButton.setIsPressed(false);
+                  mouse.leftButton.setUnclickPosition(x,y);
+//                  player1->mouseUnclick();
+               }
+               else if (state == GLUT_DOWN)
+               {
+                  mouse.leftButton.setIsPressed(true);
+                  mouse.leftButton.setClickPosition(x,y);
+               }
+            }
+            glutPostRedisplay();
+    }
+    
+    void mouseMovement(int x, int y)
+    {
+       y = 2*arena.y + arena.height - y;
+       mouse.setPosition(x, y);
+       glutPostRedisplay();
+    }
 };
 
 #endif /* Game_hpp */

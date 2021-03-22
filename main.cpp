@@ -148,6 +148,13 @@ void idle(void)
 void keyPress(unsigned char key, int x, int y) {
     game->keyPress(key, x, y);
 }
+
+void mouseEvent(int button, int state, int x, int y) {
+    game->mouseEvent(button, state, x, y);
+};
+void mouseMovement(int x, int y) {
+    game->mouseMovement(x, y);
+}
  
 int main(int argc, char *argv[])
 {
@@ -175,6 +182,10 @@ int main(int argc, char *argv[])
     glutKeyboardFunc(keyPress);
     glutIdleFunc(idle);
     glutKeyboardUpFunc(keyup);
+  
+    glutMouseFunc(mouseEvent);
+    glutPassiveMotionFunc(mouseMovement);
+    glutMotionFunc(mouseMovement);
     
     init();
  

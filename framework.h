@@ -39,6 +39,19 @@ public:
         GLfloat deg = (angle*180.0)/PI;
         return deg;
     }
+    
+    static GLfloat map(GLfloat x, GLfloat in_min, GLfloat in_max, GLfloat out_min, GLfloat out_max)
+    {
+      return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+    
+    static GLfloat clamp(GLfloat v, GLfloat lo, GLfloat hi) {
+        GLfloat clamped_value = v;
+        if      ( v < lo ) clamped_value = lo;
+        else if ( v > hi ) clamped_value = hi;
+        return clamped_value;
+    }
+
 };
 
 
@@ -55,7 +68,6 @@ class Point2D {
         GLfloat distanceTo(Point2D* another) {
             return sqrt(pow(this->x - another->x, 2) + pow(this->y - another->y, 2));
         }
-    
     
         // Angle in degrees
         GLfloat getAngle() {

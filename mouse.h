@@ -1,6 +1,8 @@
 #ifndef mouse_hpp
 #define mouse_hpp
 
+#include "framework.h"
+
 enum MouseButton
 {
    LEFT_MOUSE_BUTTON = 0,
@@ -10,37 +12,48 @@ enum MouseButton
 class MouseStatus
 {
 public:
-   bool isPressed = false;
+    bool isPressed = false;
+    Point2D clickPosition = Point2D(0, 0);
+    Point2D unclickPosition = Point2D(0, 0);
 
-   MouseStatus() {}
+    MouseStatus() {}
 
-   void setIsPressed(bool pressed)
-   {
+    void setIsPressed(bool pressed)
+    {
       this->isPressed = pressed;
-   }
+    }
+    void setClickPosition(float x, float y)
+    {
+        this->clickPosition.x = x;
+        this->clickPosition.y = y;
+    }
+    void setUnclickPosition(float x, float y)
+    {
+        this->unclickPosition.x = x;
+        this->unclickPosition.y = y;
+    }
 };
 
 class Mouse
 {
 public:
-   MouseStatus leftButton;
-   float x = 0;
-   float y = 0;
+    MouseStatus leftButton;
+    Point2D currentPosition = Point2D(0, 0);
 
-   Mouse() {}
+    Mouse() {}
 
-   Mouse(float x, float y)
-   {
-      this->x = x;
-      this->y = y;
-   }
+    Mouse(float x, float y)
+    {
+        this->currentPosition.x = x;
+        this->currentPosition.y = y;
+    }
 
-   void setPosition(float x, float y)
-   {
-      this->x = x;
-      this->y = y;
-   }
-    
+    void setPosition(float x, float y)
+    {
+        this->currentPosition.x = x;
+        this->currentPosition.y = y;
+    }
+
 //    void mouseEvent(int button, int state, int x, int y)
 //    {
 //       y = -y + TAMANHO_JANELA;
@@ -68,6 +81,7 @@ public:
 //       glutPostRedisplay();
 //    }
 //
+    
 //    void mouseMovement(int x, int y)
 //    {
 //       y = -y + TAMANHO_JANELA;

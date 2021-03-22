@@ -154,40 +154,53 @@ void Character::DrawRightArms(GLfloat x, GLfloat y)
     glPopMatrix();
 }
 
-bool Character::RotateLeftArm(GLfloat inc)
+bool Character::RotateLeftArm(GLfloat inc, bool applyFix)
 {
+    if(!applyFix)
     inc = this->gameObject->applyTimeFix(inc);
     
-    if(this->leftArmFirstJointAngle >= 120 && inc > 0) {
+    if(this->leftArmFirstJointAngle >= MIN_LEFT_ANGLE && inc > 0) {
         this->nextNPCState(CharacterPunchSignal::MIN_REACHED);
         return false;
     }
-    else if(this->leftArmFirstJointAngle <= 45 && inc < 0) {
+    else if(this->leftArmFirstJointAngle <= MAX_LEFT_ANGLE && inc < 0) {
         this->nextNPCState(CharacterPunchSignal::MAX_REACHED);
         return false;
     }
     
     this->leftArmFirstJointAngle += inc;
-    this->leftArmSecondJointAngle -= inc/1.7;
+    this->leftArmSecondJointAngle -= inc*0.65;
     return true;
 }
 
-bool Character::RotateRightArm(GLfloat inc)
+bool Character::RotateRightArm(GLfloat inc, bool applyFix)
 {
-    inc = this->gameObject->applyTimeFix(inc);
+    if(!applyFix)
+        inc = this->gameObject->applyTimeFix(inc);
     
-    if(this->rightArmFirstJointAngle <= -120 && inc > 0) {
+    if(this->rightArmFirstJointAngle <= MIN_RIGHT_ANGLE && inc > 0) {
         this->nextNPCState(CharacterPunchSignal::MIN_REACHED);
         return false;
     }
-    else if(this->rightArmFirstJointAngle >= -45 && inc < 0) {
+    else if(this->rightArmFirstJointAngle >= MAX_RIGHT_ANGLE && inc < 0) {
         this->nextNPCState(CharacterPunchSignal::MAX_REACHED);
         return false;
     }
     
     this->rightArmFirstJointAngle -= inc;
-    this->rightArmSecondJointAngle += inc/1.7;
+    this->rightArmSecondJointAngle += inc*0.65;
     return true;
+}
+
+void Character::RotateLeftArmToAngle(GLfloat angle)
+{
+    this->leftArmFirstJointAngle = angle;
+    this->leftArmSecondJointAngle = -120 - (angle - 120)*0.65;
+}
+void Character::RotateRightArmToAngle(GLfloat angle)
+{
+    this->rightArmFirstJointAngle = angle;
+    this->rightArmSecondJointAngle = 120 - (angle+120)*0.65;
 }
 
 void Character::DrawHand()
@@ -232,7 +245,8 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
     glPopMatrix();
 }
 
-void Character::MoveForward(Game* game, GLfloat dx) {
+void Character::MoveForward(Game* game, GLfloat dx)
+{
     dx = this->gameObject->applyTimeFix(dx);
     
     Point2D* charPosition = new Point2D(0, 0);
@@ -247,7 +261,8 @@ void Character::MoveForward(Game* game, GLfloat dx) {
     this->gY = charPosition->y;
 }
 
-bool Character::willColideWithOtherPlayer(Character* another, GLfloat dx) {
+bool Character::willColideWithOtherPlayer(Character* another, GLfloat dx)
+{
     if(another == this) return false;
     Point2D* thisPoint = new Point2D(0, 0);
     moveForwardTransform(dx)->apply(thisPoint);
@@ -258,7 +273,8 @@ bool Character::willColideWithOtherPlayer(Character* another, GLfloat dx) {
     return Collision::circleCircleIntersect(thisCircle, anotherCircle);
 }
 
-void Character::AnotherCharacterIsWithinRadius(Character* another, GLfloat dx) {
+void Character::AnotherCharacterIsWithinRadius(Character* another, GLfloat dx)
+{
     if(another == this) return;
     Point2D* thisPoint = new Point2D(0, 0);
     moveForwardTransform(dx)->apply(thisPoint);
@@ -318,4 +334,48 @@ void Character::followCharacter(Game* game, Character* other, GLfloat dx) {
 
 void Character::setColor(Color _color) {
     this->torsoColor = _color;
+}
+
+GLfloat Character::getLeftMouseAngle(GLfloat xDistance) {
+    cout << xDistance << "," << 0 << "," << (float)this->gameObject->arena.width/2 << "," << MIN_LEFT_ANGLE << "," << MAX_LEFT_ANGLE << endl;
+    GLfloat mappedValue = Util::map(xDistance, 0, (float)this->gameObject->arena.width/2, MIN_LEFT_ANGLE, MAX_LEFT_ANGLE);
+    cout<< "mapped: "<<mappedValue << ","<< Util::clamp(mappedValue, MIN_LEFT_ANGLE, MAX_LEFT_ANGLE)<< endl;
+    return Util::clamp(mappedValue, MAX_LEFT_ANGLE, MIN_LEFT_ANGLE);
+}
+GLfloat Character::getRightMouseAngle(GLfloat xDistance) {
+    GLfloat mappedValue = Util::map(xDistance, 0, (float)this->gameObject->arena.width/2, MIN_RIGHT_ANGLE, MAX_RIGHT_ANGLE);
+    return Util::clamp(mappedValue, MIN_RIGHT_ANGLE, MAX_RIGHT_ANGLE);
+}
+
+void Character::handlePlayerPunchControls() {
+    if(this->gameObject->mouse.leftButton.isPressed) {
+        GLfloat xDistance = this->gameObject->mouse.currentPosition.x - this->gameObject->mouse.leftButton.clickPosition.x;
+        
+        cout << "xDisntance: " << xDistance << endl;
+        GLfloat finalAngle;
+        if(this->gameObject->mouse.currentPosition.x > this->gameObject->mouse.leftButton.clickPosition.x){
+            this->punchState = CharacterPunchState::RIGHT_PUNCH;
+            finalAngle = getRightMouseAngle(abs(xDistance));
+            
+            cout << "Angle: " << finalAngle << endl;
+            this->RotateRightArmToAngle(finalAngle);
+            this->RotateLeftArmToAngle(120);
+        }
+        else if(this->gameObject->mouse.currentPosition.x < this->gameObject->mouse.leftButton.clickPosition.x){
+            this->punchState = CharacterPunchState::LEFT_PUNCH;
+            finalAngle = getLeftMouseAngle(abs(xDistance));
+            
+            cout << "Angle: " << finalAngle << endl;
+            this->RotateLeftArmToAngle(finalAngle);
+            this->RotateRightArmToAngle(-120);
+        }
+        else {
+            this->RotateLeftArmToAngle(MIN_LEFT_ANGLE);
+            this->RotateRightArmToAngle(MIN_RIGHT_ANGLE);
+        }
+    } else {
+        this->punchState = CharacterPunchState::IDLE;
+        this->RotateRightArm(2);
+        this->RotateLeftArm(2);
+    }
 }

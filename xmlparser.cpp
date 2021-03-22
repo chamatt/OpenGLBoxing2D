@@ -71,9 +71,5 @@ GameInitObject XMLParser::parseArena(string xmlPath) {
         player1 = new PlayerObject(secondCircle.radius, Point2D(secondPoint.x,  secondPoint.y), anglep2);
     }
     
-//    cout << firstCircle.toString() << endl;
-//    cout << secondCircle.toString() << endl;
-//    cout << arena.toString() << endl;
-    
     return GameInitObject(arena, *player1, *player2);
 }

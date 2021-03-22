@@ -10,6 +10,7 @@
 
 #ifndef character_hpp
 #define character_hpp
+#include <algorithm>
 #include "game.h"
 #include "framework.h"
 // Dimensions
@@ -19,6 +20,13 @@
 #define baseHeight 40
 #define baseWidth 100
 #define radiusWheel 30
+
+#define MIN_LEFT_ANGLE 120
+#define MAX_LEFT_ANGLE 25
+#define MIN_RIGHT_ANGLE -120
+#define MAX_RIGHT_ANGLE -25
+
+using namespace std;
 
 class Game;
 
@@ -73,7 +81,7 @@ class Character {
     CharacterType charType = CharacterType::PLAYER;
     CharacterState charState = CharacterState::PASSIVE;
     CharacterPunchState punchState = CharacterPunchState::IDLE;
-    
+
 private:
     void DrawRectangle(GLint height, GLint width, Color color);
     void DrawCircle(GLint radius, Color color);
@@ -121,7 +129,19 @@ public:
     
     bool willColide(Game* game, GLfloat dx);
     
-    void Draw(){
+    void handlePunchControls() {
+        switch(charType){
+            case CharacterType::ENEMY:
+                handleEnemyPunchControls();
+                break;
+            case CharacterType::PLAYER:
+                handlePlayerPunchControls();
+                break;
+            default: break;
+        }
+    }
+    
+    void handleEnemyPunchControls() {
         if(punchState == CharacterPunchState::LEFT_PUNCH) {
             this->RotateLeftArm(-2);
         }
@@ -134,11 +154,27 @@ public:
         if(punchState == CharacterPunchState::RETURN_RIGHT_PUNCH) {
             this->RotateRightArm(2);
         }
+    }
+    
+    GLfloat getLeftMouseAngle(GLfloat xDistance);
+    GLfloat getRightMouseAngle(GLfloat xDistance);
+    
+    void handlePlayerPunchState() {
         
+    }
+    
+    void handlePlayerPunchControls();
+    void Draw(){
         DrawCharacter(gX, gY);
+        
+        handlePunchControls();
     };
-    bool RotateLeftArm(GLfloat inc);
-    bool RotateRightArm(GLfloat inc);
+    bool RotateLeftArm(GLfloat inc, bool applyFix = false);
+    bool RotateRightArm(GLfloat inc, bool applyFix = false);
+    
+    void RotateLeftArmToAngle(GLfloat angle);
+    void RotateRightArmToAngle(GLfloat angle);
+    
     void RotateBody(GLfloat inc);
     void MoveForward(Game* game, GLfloat dx);
     
