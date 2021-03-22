@@ -272,8 +272,8 @@ public:
     
     void handlePlayerPunchControls();
     void Draw();
-    bool RotateLeftArm(GLfloat inc, bool applyFix = false);
-    bool RotateRightArm(GLfloat inc, bool applyFix = false);
+    bool RotateLeftArm(GLfloat inc, bool applyFix = true);
+    bool RotateRightArm(GLfloat inc, bool applyFix = true);
     
     void RotateLeftArmToAngle(GLfloat angle);
     void RotateRightArmToAngle(GLfloat angle);

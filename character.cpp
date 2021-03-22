@@ -149,8 +149,8 @@ bool Character::RotateLeftArm(GLfloat inc, bool applyFix)
 {
     if(!characterIsEnabled) return false;
     
-    if(!applyFix)
-    inc = this->gameObject->applyTimeFix(inc);
+    if(applyFix)
+        inc = this->gameObject->applyTimeFix(inc);
     
     if(this->leftArmFirstJointAngle >= MIN_LEFT_ANGLE && inc > 0) {
         this->nextNPCState(CharacterPunchSignal::MIN_REACHED);
@@ -170,7 +170,7 @@ bool Character::RotateRightArm(GLfloat inc, bool applyFix)
 {
     if(!characterIsEnabled) return false;
     
-    if(!applyFix)
+    if(applyFix)
         inc = this->gameObject->applyTimeFix(inc);
     
     if(this->rightArmFirstJointAngle <= MIN_RIGHT_ANGLE && inc > 0) {
