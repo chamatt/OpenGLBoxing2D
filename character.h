@@ -75,7 +75,6 @@ enum CharacterPunchSignal {
 class Character {
     Game* gameObject;
     
-    
     DefaultColors defaultColors;
     
     Color torsoColor;
@@ -109,7 +108,6 @@ class Character {
     void setPunchState(CharacterPunchState state) {
         switch(state) {
             case CharacterPunchState::IDLE:
-//                this->countPoint = true;
                 resetHitOpponent();
                 this->punchState = state;
                 break;
@@ -197,6 +195,12 @@ public:
     GLfloat gTheta;
     
     int hitScore = 0;
+    
+    
+    bool characterIsEnabled = true;
+    void toggleCharacterEnabled() {
+       this->characterIsEnabled = !characterIsEnabled;
+    }
     
     Character(Game* game, GLfloat size);
     Character(Game* game, GLfloat size, Point2D position, GLfloat angle);

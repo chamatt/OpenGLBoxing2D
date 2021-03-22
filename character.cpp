@@ -159,6 +159,8 @@ void Character::DrawRightArms(GLfloat x, GLfloat y)
 
 bool Character::RotateLeftArm(GLfloat inc, bool applyFix)
 {
+    if(!characterIsEnabled) return false;
+    
     if(!applyFix)
     inc = this->gameObject->applyTimeFix(inc);
     
@@ -178,6 +180,8 @@ bool Character::RotateLeftArm(GLfloat inc, bool applyFix)
 
 bool Character::RotateRightArm(GLfloat inc, bool applyFix)
 {
+    if(!characterIsEnabled) return false;
+    
     if(!applyFix)
         inc = this->gameObject->applyTimeFix(inc);
     
@@ -356,6 +360,7 @@ void Character::RotateBody(GLfloat inc) {
 }
 
 void Character::followCharacter(Game* game, Character* other, GLfloat dx) {
+    if(!characterIsEnabled) return;
     Point2D* charPosition = new Point2D(0, 0);
     
     GLfloat angle = atan2(this->gY - other->gY, this->gX - other->gX);

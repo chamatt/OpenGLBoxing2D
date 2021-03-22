@@ -99,7 +99,7 @@ void idle(void)
     {
         game->player1->RotateBody(inc);
     }
-    
+
     if(game->isKeyPressed('w'))
     {
         game->player1->MoveForward(inc);
@@ -108,7 +108,6 @@ void idle(void)
     {
         game->player1->MoveForward(-inc);
     }
-    
    
     
 //    //Trata o tiro (soh permite um tiro por vez)
