@@ -17,8 +17,9 @@
 		905F384F2606E98C0061448D /* game-config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "game-config.h"; sourceTree = "<group>"; };
 		90B98C4A2603A0FD005403C2 /* mouse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mouse.cpp; sourceTree = "<group>"; };
 		90B98C4B2603A0FD005403C2 /* mouse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mouse.h; sourceTree = "<group>"; };
+		90D4CB9E26090BAA00931D53 /* makefile.mac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makefile.mac; sourceTree = "<group>"; };
 		90F480AC25FDA4A200B1C69C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		90F480AD25FDA52C00B1C69C /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		90F480AD25FDA52C00B1C69C /* makefile.linux */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makefile.linux; sourceTree = "<group>"; };
 		90F480AE25FDA52C00B1C69C /* framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framework.h; sourceTree = "<group>"; };
 		90F480AF25FDA52C00B1C69C /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		90F480B025FDA52C00B1C69C /* OpenGLBoxing2D.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = OpenGLBoxing2D.xcodeproj; sourceTree = "<group>"; };
@@ -47,8 +48,9 @@
 				90F480B325FDA52C00B1C69C /* framework.cpp */,
 				90F480AE25FDA52C00B1C69C /* framework.h */,
 				90F480AF25FDA52C00B1C69C /* main.cpp */,
-				90F480AD25FDA52C00B1C69C /* makefile */,
+				90F480AD25FDA52C00B1C69C /* makefile.linux */,
 				90F480B025FDA52C00B1C69C /* OpenGLBoxing2D.xcodeproj */,
+				90D4CB9E26090BAA00931D53 /* makefile.mac */,
 			);
 			sourceTree = "<group>";
 		};

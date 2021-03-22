@@ -2,6 +2,7 @@ CC =g++
 CFLAGS =-lGL\
 		 -lGLU\
 		 -lglut\
+		 -std=c++11\
 
 all: trabalhocg
 
