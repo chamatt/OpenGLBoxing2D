@@ -53,41 +53,6 @@ public:
         this->currentPosition.x = x;
         this->currentPosition.y = y;
     }
-
-//    void mouseEvent(int button, int state, int x, int y)
-//    {
-//       y = -y + TAMANHO_JANELA;
-//       if (button == GLUT_LEFT_BUTTON)
-//       {
-//          if (state == GLUT_UP)
-//          {
-//             mouse.leftButton.setIsPressed(false);
-//             mainSquare.setIsDragging(false);
-//          }
-//          else if (state == GLUT_DOWN)
-//          {
-//             mouse.leftButton.setIsPressed(true);
-//             if (mainSquare.isWithin(mouse.x, mouse.y))
-//             {
-//                mainSquare.setIsDragging(true);
-//                mainSquare.setAnchor(mouse.x, mouse.y);
-//             }
-//             else
-//             {
-//                mainSquare.setIsDragging(false);
-//             }
-//          }
-//       }
-//       glutPostRedisplay();
-//    }
-//
-    
-//    void mouseMovement(int x, int y)
-//    {
-//       y = -y + TAMANHO_JANELA;
-//       mouse.setPosition((float)x / TAMANHO_JANELA, (float)y / TAMANHO_JANELA);
-//       glutPostRedisplay();
-//    }
 };
 
 

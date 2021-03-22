@@ -42,32 +42,22 @@ void Game::DrawGameOver()
     
     string winString = "You Win!";
     string loseString = "You Lose!";
-    string tieString = "Draw!";
+    string tieString = "Game Over!";
     string restartString = "Press 'M' to restart the game";
     
+    GLfloat centerX =this->arena.x+this->arena.width/2;
+    GLfloat centerY = this->arena.y+this->arena.height/2;
+    
     if(player1->hitScore > player2->hitScore)
-        Output(this->arena.x+this->arena.width/2 - calcSize(winString), this->arena.x+this->arena.height/2, Color(0,255,0), winString);
+        Output(centerX - calcSize(winString), centerY, Color(0,255,0), winString);
     
     if(player1->hitScore < player2->hitScore)
-        Output(this->arena.x+this->arena.width/2 - calcSize(loseString), this->arena.x+this->arena.height/2, Color(255,0,0), loseString);
+        Output(centerX - calcSize(loseString), centerY, Color(255,0,0), loseString);
     
     if(player1->hitScore == player2->hitScore)
-        Output(this->arena.x+this->arena.width/2 - calcSize(tieString), this->arena.x+this->arena.height/2, Color(0,0,255), tieString);
+        Output(centerX - calcSize(tieString), centerY, Color(0,0,255), tieString);
     
-    Output(this->arena.x+this->arena.width/2 - calcSize(restartString), this->arena.x+this->arena.height/2 - 20, Color(255,255,255), restartString);
-//   GLfloat x = this->arena.x+20, y = this->arena.y+20;
-//   glColor3f(1.0, 1.0, 1.0);
-//   //Cria a string a ser impressa
-//   char *tmpStr;
-//   sprintf(this->str, "Player 1: %d X Player 2: %d", this->player1->hitScore, this->player2->hitScore);
-//   //Define a posicao onde vai comecar a imprimir
-//   glRasterPos2f(x, y);
-//   //Imprime um caractere por vez
-//   tmpStr = this->str;
-//   while( *tmpStr ){
-//       glutBitmapCharacter(this->font, *tmpStr);
-//       tmpStr++;
-//   }
+    Output(centerX - calcSize(restartString), centerY - 20, Color(255,255,255), restartString);
 }
 
 void Game::keyPress(unsigned char key, int x, int y)
@@ -107,6 +97,11 @@ void Game::keyPress(unsigned char key, int x, int y)
         case 'I':
             this->maxScore = maxScore == 10 ? 50 : 10;
             break;
+        case 'h':
+        case 'H':
+            player1->toggleShowHitmark();
+            player2->toggleShowHitmark();
+            break;
         case 27 :
             if(gameIsOver)
              exit(0);
@@ -130,10 +125,10 @@ Game::Game(string xmlPath) {
     GameInitObject initObject = XMLParser::parseArena(xmlPath);
     
     this->player1 = new Character(this, initObject.player1.headSize, initObject.player1.position,  initObject.player1.angle - 90);
-    this->player1->setColor(Color(90, 128, 184));
+//    this->player1->setColor(Color(90, 128, 184));
     this->player1->setPlayerType(CharacterType::PLAYER);
     this->player2 = new Character(this, initObject.player2.headSize, initObject.player2.position,  initObject.player2.angle - 90);
-    this->player2->setColor(Color(78, 173, 71));
+//    this->player2->setColor(Color(78, 173, 71));
     this->player2->setPlayerType(CharacterType::ENEMY);
 
     this->arena = initObject.arena;

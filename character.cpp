@@ -16,12 +16,6 @@ Character::Character(Game* game, GLfloat size){
     gY = -200;
     gTheta = 0;
     
-    torsoColor = Color(90, 128, 184);
-    torsoStroke = Color(64, 92, 134);
-    noseColor = Color(90, 128, 184);
-    noseStroke = Color(64, 92, 134);
-    armsColor = Color(161, 186, 102);
-    
     handColor = defaultColors.handColor;
     handStroke = defaultColors.handStroke;
     
@@ -38,13 +32,9 @@ Character::Character(Game* game, GLfloat size){
 Character::Character(Game* game, GLfloat size, Point2D position, GLfloat angle){
     this->gameObject = game;
     
-    torsoColor = Color(90, 128, 184);
-    torsoStroke = Color(64, 92, 134);
-    noseColor = Color(90, 128, 184);
-    noseStroke = Color(64, 92, 134);
-    armsColor = Color(161, 186, 102);
-    handColor = Color(179, 87, 81);
-    handStroke = Color(130, 61, 57);
+    armsColor = defaultColors.armsColor;
+    handColor = defaultColors.handColor;
+    handStroke = defaultColors.handStroke;
     
     this->torsoRadius = size;
     this->handRadius = (3.0/4.0) * size;
@@ -248,7 +238,6 @@ void Character::DrawCharacter(GLfloat x, GLfloat y)
         this->DrawCircleDashed(outsideRadius, Color(255, 255, 255));
     }
     
-//    this->DrawCircle(5, Color(255,255,0));
     glPopMatrix();
 }
 

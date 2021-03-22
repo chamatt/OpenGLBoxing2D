@@ -36,8 +36,10 @@ class DefaultColors {
 public:
     DefaultColors(){}
     // Nose
-    Color noseColor = Color(90, 128, 184);
-    Color noseStroke = Color(64, 92, 134);
+    Color playerNoseColor = Color(90, 128, 184);
+    Color playerNoseStroke = Color(90, 128, 184);
+    Color enemyNoseColor = Color(78, 173, 71);
+    Color enemyNoseStroke = Color(78, 173, 71);
     
     // Arms
     Color armsColor = Color(161, 186, 102);
@@ -47,6 +49,12 @@ public:
     Color handStroke = Color(130, 61, 57);
     Color hitHandColor = Color(255, 0, 255);
     Color hitHandStroke = Color(255, 10, 255);
+    
+    // torso
+    Color playerTorsoColor = Color(90, 128, 184);
+    Color playerTorsoStroke = Color(90, 128, 184);
+    Color enemyTorsoColor = Color(78, 173, 71);
+    Color enemyTorsoStroke = Color(78, 173, 71);
 };
 
 enum CharacterType {
@@ -121,8 +129,10 @@ class Character {
     void handleHitOpponent(Character* another) {
         if(countPoint){
             this->countPoint = false;
-            this->handColor = defaultColors.hitHandColor;
-            this->handStroke = defaultColors.hitHandStroke;
+            if(showHitmark){
+                this->handColor = defaultColors.hitHandColor;
+                this->handStroke = defaultColors.hitHandStroke;
+            }
             this->hitScore++;
             
             another->MoveForward(BACKWARD_HIT_MOVE);
@@ -204,6 +214,10 @@ public:
     void toggleOutsideRadius() {
        this->showOutsideRadius = !showOutsideRadius;
     }
+    bool showHitmark = false;
+    void toggleShowHitmark() {
+       this->showHitmark = !showHitmark;
+    }
     
     Character(Game* game, GLfloat size);
     Character(Game* game, GLfloat size, Point2D position, GLfloat angle);
@@ -269,6 +283,18 @@ public:
     
     void setPlayerType(CharacterType type) {
         this->charType = type;
+        if(type == CharacterType::PLAYER) {
+            this->torsoColor = defaultColors.playerTorsoColor;
+            this->torsoStroke = defaultColors.playerTorsoStroke;
+            this->noseColor = defaultColors.playerNoseColor;
+            this->noseStroke = defaultColors.playerNoseStroke;
+        } else if(type == CharacterType::ENEMY) {
+            this->torsoColor = defaultColors.enemyTorsoColor;
+            this->torsoStroke = defaultColors.enemyTorsoStroke;
+            this->noseColor = defaultColors.enemyNoseColor;
+            this->noseStroke = defaultColors.enemyNoseStroke;
+        }
+        
     }
     
     GLfloat GetX(){
