@@ -1,12 +1,6 @@
-//
-//  xmlparse.cpp
-//  OpenGLBoxing2D
-//
-//  Created by Matheus Leanon on 20/03/21.
-//
-
 #include "xmlparser.h"
 #include "framework.h"
+#include <map>
 
 Rectangle XMLParser::parseRectangle(XMLNode* xmlNode) {
     GLfloat x = xmlNode->ToElement()->DoubleAttribute("x");
@@ -39,12 +33,23 @@ GameInitObject XMLParser::parseArena(string xmlPath) {
         exit(1);
     }
 
-    XMLNode* rectangle = doc.FirstChildElement()->FirstChild();
-    Rectangle arena = XMLParser::parseRectangle(rectangle);
-    XMLNode* firstCircleNode = rectangle->NextSibling();
-    Circle firstCircle = XMLParser::parseCircle(firstCircleNode);
-    XMLNode* secondCircleNode = firstCircleNode->NextSibling();
-    Circle secondCircle = XMLParser::parseCircle(secondCircleNode);
+    XMLNode* first = doc.FirstChildElement()->FirstChild();
+    string firstColor = first->ToElement()->Attribute("fill");
+    XMLNode* second = first->NextSibling();
+    string secondColor = second->ToElement()->Attribute("fill");
+    XMLNode* third = second->NextSibling();
+    string thirdColor = third->ToElement()->Attribute("fill");
+    
+    map<string, XMLNode*> elementMap;
+    
+    elementMap[firstColor] = first;
+    elementMap[secondColor] = second;
+    elementMap[thirdColor] = third;
+    
+    Rectangle arena = XMLParser::parseRectangle(elementMap["blue"]);
+    
+    Circle playerCircle = XMLParser::parseCircle(elementMap["green"]);
+    Circle enemyCircle = XMLParser::parseCircle(elementMap["red"]);
     
     PlayerObject* player1;
     PlayerObject* player2;
@@ -55,21 +60,16 @@ GameInitObject XMLParser::parseArena(string xmlPath) {
         point.y = ypos;
     };
     
-    Point2D firstPoint = Point2D(firstCircle.x, firstCircle.y);
+    Point2D firstPoint = Point2D(playerCircle.x, playerCircle.y);
     changeYCoordinates(firstPoint);
-    Point2D secondPoint = Point2D(secondCircle.x, secondCircle.y);
+    Point2D secondPoint = Point2D(enemyCircle.x, enemyCircle.y);
     changeYCoordinates(secondPoint);
     
     GLfloat anglep1 = (Point2D(secondPoint.x, secondPoint.y) - Point2D(firstPoint.x, firstPoint.y)).getAngle();
     GLfloat anglep2 = (Point2D(firstPoint.x, firstPoint.y) - Point2D(secondPoint.x, secondPoint.y)).getAngle();
     
-    if(firstCircle.color.colorString == "green") {
-        player1 = new PlayerObject(firstCircle.radius, Point2D(firstPoint.x, firstPoint.y), anglep1);
-        player2 = new PlayerObject(secondCircle.radius, Point2D(secondPoint.x,  secondPoint.y), anglep2);
-    } else {
-        player2 = new PlayerObject(firstCircle.radius, Point2D(firstPoint.x,  firstPoint.y), anglep1);
-        player1 = new PlayerObject(secondCircle.radius, Point2D(secondPoint.x,  secondPoint.y), anglep2);
-    }
+    player1 = new PlayerObject(playerCircle.radius, Point2D(firstPoint.x, firstPoint.y), anglep1);
+    player2 = new PlayerObject(enemyCircle.radius, Point2D(secondPoint.x,  secondPoint.y), anglep2);
     
     return GameInitObject(arena, *player1, *player2);
 }

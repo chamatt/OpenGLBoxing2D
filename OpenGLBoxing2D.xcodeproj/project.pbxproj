@@ -64,7 +64,7 @@
 /* Begin PBXLegacyTarget section */
 		90F480A625FDA43B00B1C69C /* OpenGLBoxing2D */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "run ARGS=\"/Users/matheusleanon/Documents/Code/OpenGLBoxing2D/examples/arena_1.svg\"";
+			buildArgumentsString = "run ARGS=\"/Users/matheusleanon/Documents/Code/OpenGLBoxing2D/examples/arena_2.svg\"";
 			buildConfigurationList = 90F480A925FDA43B00B1C69C /* Build configuration list for PBXLegacyTarget "OpenGLBoxing2D" */;
 			buildPhases = (
 			);
