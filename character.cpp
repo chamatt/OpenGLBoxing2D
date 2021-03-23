@@ -405,8 +405,8 @@ void Character::handlePlayerPunchControls() {
             }
         } else {
             this->setPunchState(CharacterPunchState::IDLE);
-            this->RotateRightArm(2);
-            this->RotateLeftArm(2);
+            this->RotateRightArm(4, false);
+            this->RotateLeftArm(4, false);
         }
     }
 }
