@@ -92,7 +92,6 @@ public:
                {
                   mouse.leftButton.setIsPressed(false);
                   mouse.leftButton.setUnclickPosition(x,y);
-//                  player1->mouseUnclick();
                }
                else if (state == GLUT_DOWN)
                {

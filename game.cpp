@@ -112,6 +112,21 @@ void Game::keyPress(unsigned char key, int x, int y)
             }
         
     }
+    
+    switch(key) {
+        case 'a':
+        case 'A':
+        case 'd':
+        case 'D':
+        case 'w':
+        case 'W':
+        case 's':
+        case 'S':
+               mouse.leftButton.setIsPressed(false);
+        default: break;
+    }
+    
+    
     glutPostRedisplay();
 }
 
