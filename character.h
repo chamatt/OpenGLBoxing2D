@@ -136,8 +136,7 @@ class Character {
                 this->handStroke = defaultColors.hitHandStroke;
             }
             this->hitScore++;
-            
-            another->MoveForward(BACKWARD_HIT_MOVE);
+//            another->MoveForward(BACKWARD_HIT_MOVE);
         }
     }
     
