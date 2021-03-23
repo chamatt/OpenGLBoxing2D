@@ -254,16 +254,16 @@ public:
     
     void handleEnemyPunchControls() {
         if(punchState == CharacterPunchState::LEFT_PUNCH) {
-            this->RotateLeftArm(-2);
+            this->RotateLeftArm(-4, false);
         }
         if(punchState == CharacterPunchState::RETURN_LEFT_PUNCH) {
-            this->RotateLeftArm(2);
+            this->RotateLeftArm(4, false);
         }
         if(punchState == CharacterPunchState::RIGHT_PUNCH) {
-            this->RotateRightArm(-2);
+            this->RotateRightArm(-4, false);
         }
         if(punchState == CharacterPunchState::RETURN_RIGHT_PUNCH) {
-            this->RotateRightArm(2);
+            this->RotateRightArm(4, false);
         }
     }
     
@@ -332,7 +332,8 @@ public:
             }
         }
         else if(punchState == RIGHT_PUNCH) {
-            if(signal == CharacterPunchSignal::MAX_REACHED) {                this->setPunchState(CharacterPunchState::RETURN_RIGHT_PUNCH);
+            if(signal == CharacterPunchSignal::MAX_REACHED) {
+                this->setPunchState(CharacterPunchState::RETURN_RIGHT_PUNCH);
             }
         }
         else if(punchState == RETURN_RIGHT_PUNCH) {
