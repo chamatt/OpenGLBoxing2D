@@ -376,8 +376,9 @@ GLfloat Character::getRightMouseAngle(GLfloat xDistance) {
 
 void Character::handlePlayerPunchControls() {
     if(!characterIsEnabled) return;
+    
     if(this->gameObject->player1 == this){
-        if(this->gameObject->mouse.leftButton.isPressed) {
+        if(this->gameObject->mouse.leftButton.isPressed && !characterIsMoving()) {
             GLfloat xDistance = this->gameObject->mouse.currentPosition.x - this->gameObject->mouse.leftButton.clickPosition.x;
             
             GLfloat finalAngle;
@@ -419,3 +420,14 @@ void Character::Draw(){
     
     handlePunchControls();
 };
+
+bool Character::characterIsMoving() {
+    vector<char> moveKeys = {'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'};
+    for(char key : moveKeys) {
+        if(this->gameObject->isKeyPressed(key)){
+            this->gameObject->mouse.leftButton.setIsPressed(false);
+            return true;
+        }
+    }
+    return false;
+}

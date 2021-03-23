@@ -342,6 +342,8 @@ public:
             }
         }
     }
+    
+    bool characterIsMoving();
 };
 
 #endif /* character_hpp */
